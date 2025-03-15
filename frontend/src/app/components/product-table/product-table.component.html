@@ -1,0 +1,50 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- EAN Column -->
+  <ng-container matColumnDef="ean">
+    <mat-header-cell *matHeaderCellDef> EAN/GTIN </mat-header-cell>
+    <mat-cell *matCellDef="let product"> {{ product.ean_gtin }} </mat-cell>
+  </ng-container>
+
+  <!-- Category Column -->
+  <ng-container matColumnDef="category">
+    <mat-header-cell *matHeaderCellDef> Kategorie </mat-header-cell>
+    <mat-cell *matCellDef="let product"> {{ product.category_name }} </mat-cell>
+  </ng-container>
+
+  <!-- Product Name Column -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef> Produktname </mat-header-cell>
+    <mat-cell *matCellDef="let product"> {{ product.name }} </mat-cell>
+  </ng-container>
+
+  <!-- Weight/Volume Column -->
+  <ng-container matColumnDef="weightVolume">
+    <mat-header-cell *matHeaderCellDef> Gewicht/Volumen </mat-header-cell>
+    <mat-cell *matCellDef="let product">
+      {{ product.net_volume_l ? product.net_volume_l + ' L' : product.net_weight_g + ' g' }}
+    </mat-cell>
+  </ng-container>
+
+  <!-- Manufacturer Column -->
+  <ng-container matColumnDef="manufacturer">
+    <mat-header-cell *matHeaderCellDef> Hersteller </mat-header-cell>
+    <mat-cell *matCellDef="let product"> {{ product.manufacturer_name }} </mat-cell>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef> Aktionen </mat-header-cell>
+    <mat-cell *matCellDef="let product">
+      <button mat-icon-button color="primary" (click)="viewDetails(product); $event.stopPropagation()">
+        <mat-icon>visibility</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <!-- Encabezado de la tabla -->
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+  <!-- Fila de la tabla con evento click -->
+  <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewDetails(row)"></mat-row>
+
+  </table>
