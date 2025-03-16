@@ -1,72 +1,101 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../services/product.service';
-import { Product } from '../../interfaces/models';
-import { CurrencyPipe, NgIf } from '@angular/common';
+import { Product, Ingredient } from '../../interfaces/models';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+import {MatGridList, MatGridTile} from '@angular/material/grid-list';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCardModule} from '@angular/material/card';
+
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, CurrencyPipe]
+  imports: [CommonModule, FormsModule, MatButtonModule,MatGridList, MatGridTile, MatExpansionModule, MatCardModule] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product = {
     id: 0,
     ean_gtin: '',
-    category: { id: 0, name: 'Keine' },
-    name: '',
-    image_url: '',
     sku_plu: '',
+    name: '',
     description: '',
+    image_url: '',
     price_delivery: 0,
     price_pickup: 0,
     net_weight_g: 0,
     net_volume_l: 0,
+    gross_weight_g: 0,
     alcohol_volume: 0,
     caffeine_mg: 0,
     deposit_amount: 0,
-    manufacturer: { id: 0, name: 'Keine', address: 'Keine', country: 'Keine' },
     ingredients: [],
-    nutrition_info: { energy_kcal: 0, protein_g: 0, fat_g: 0, sugar_g: 0 }
+    nutritionInfo: {
+      energy_kcal: 0,
+      protein_g: 0,
+      fat_g: 0,
+      saturated_fat_g: 0,
+      carbohydrates_g: 0,
+      sugar_g: 0,
+      fiber_g: 0,
+      sodium_mg: 0
+    }, // ✅ Se inicializa con valores predeterminados
+    category: { id: 0, name: 'Keine' },
+    manufacturer: { id: 0, name: 'Keine', address: 'Keine', country: 'Keine' }
   };
-
+  ingredientNames: string = '';
   editMode = false;
-  originalProduct: Product | null = null;
 
-  constructor(private route: ActivatedRoute, private productService: ProductService) {}
+
+  constructor(
+    private productService: ProductService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    const productId = this.route.snapshot.paramMap.get('id');
-    if (productId) {
-      this.productService.getProductById(+productId).subscribe(product => {
-        console.log("Producto recibido en Angular:", product); // ✅ Debug
+    this.loadProduct();
+  }
 
-        // 🔹 Asignamos el producto correctamente
-        this.product = { ...product };
-        this.originalProduct = { ...product };
+  loadProduct(): void {
+    const productId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!isNaN(productId)) {
+      this.productService.getProductById(productId).subscribe(
+        product => {
+          console.log("Producto recibido en Angular:", product); // 🔥 DEBUG
 
-        // 🔹 Transformar ingredientes en texto
-        this.product.ingredientNames = product.ingredients?.map(i => i.name).join(', ') || 'Keine';
+          if (!product) {
+            console.error("El producto es null o undefined");
+            return;
+          }
+          product.manufacturer = product.manufacturer || { id: 0, name: '', address: '', country: '' };
+          product.category = product.category || { id: 0, name: '' };
 
-        // 🔹 Si no hay valores en manufacturer, evitamos errores
-        this.product.manufacturer = this.product.manufacturer || { name: 'Keine', address: 'Keine', country: 'Keine' };
+          this.product = product;
 
-        // 🔹 Si no hay info nutricional, evitamos errores
-        this.product.nutritionInfo = this.product.nutritionInfo || {
-          energy_kcal: 'N/A', protein_g: 'N/A', fat_g: 'N/A', sugar_g: 'N/A'
-        };
-      });
+          // 🔹 Convertir `ingredients` en un array de nombres
+          if (Array.isArray(product.ingredients)) {
+            this.ingredientNames = product.ingredients
+              .map(i => (typeof i === 'string' ? i : (i as Ingredient).name))
+              .join(', ') || 'Keine';
+          } else {
+            this.ingredientNames = 'Keine';
+          }
+        },
+        error => {
+          console.error("Error al obtener producto:", error);
+        }
+      );
+    } else {
+      console.error("ID de producto no válido.");
     }
   }
 
-
   cancelEdit(): void {
-    if (this.originalProduct) {
-      this.product = { ...this.originalProduct };
-    }
     this.editMode = false;
+    this.loadProduct();
   }
 }

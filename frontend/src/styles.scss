@@ -1,4 +1,118 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+  html {
+    color-scheme: light dark;
+    @include mat.theme((
+      color: mat.$orange-palette,
+      typography: Roboto,
+      density: 0
+    ));
+  }
+
+
+/* Cambiar colores globales */
+body {
+  background-color: var(--mat-sys-surface); /* Fondo base */
+  color: var(--mat-sys-on-surface); /* Color de texto */
+}
+
+/* Botones primarios */
+.mat-button, .mat-raised-button {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+/* Estilos para mat-toolbar */
+.mat-toolbar {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+/* Tarjetas (mat-card) */
+mat-card {
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  box-shadow: var(--mat-sys-level3); /* Elevación */
+}
+
+
+/* Establecer variables globales del theme */
+:root {
+  --primary-color: var(--mat-sys-primary); /* Color primario del theme */
+  --on-primary: var(--mat-sys-on-primary); /* Texto sobre color primario */
+
+  --background: var(--mat-sys-surface); /* Fondo general */
+  --text-color: var(--mat-sys-on-surface); /* Color del texto principal */
+
+  --header-bg: var(--mat-sys-surface-container); /* Color de fondo del header */
+  --header-text: var(--mat-sys-on-surface); /* Texto del header */
+
+  --card-bg: var(--mat-sys-surface-container-high); /* Fondo de las tarjetas */
+  --card-text: var(--mat-sys-on-surface); /* Texto en tarjetas */
+
+  --button-bg: var(--mat-sys-primary); /* Fondo de botones */
+  --button-text: var(--mat-sys-on-primary); /* Texto de botones */
+
+  --outline-color: var(--mat-sys-outline); /* Color de bordes y separadores */
+}
+
+/* Aplicar colores en todo el body */
+body {
+  background-color: var(--background);
+  color: var(--text-color);
+  font-family: var(--mat-sys-body-medium-font);
+  font-size: var(--mat-sys-body-medium-size);
+  font-weight: var(--mat-sys-body-medium-weight);
+  margin: 0;
+}
+
+/* Header */
+mat-toolbar {
+  background-color: var(--header-bg);
+  color: var(--header-text);
+  font-size: var(--mat-sys-title-medium-size);
+  font-weight: var(--mat-sys-title-medium-weight);
+}
+
+/* Botones */
+mat-button, mat-raised-button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+}
+
+/* Tarjetas */
+mat-card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+  box-shadow: var(--mat-sys-level2);
+  border-radius: var(--mat-sys-corner-medium);
+}
+
+/* Formularios */
+mat-form-field {
+  width: 100%;
+}
+
+/* Tablas */
+mat-table {
+  background-color: var(--card-bg);
+  border-radius: var(--mat-sys-corner-medium);
+}
+
+mat-header-cell, mat-cell {
+  padding: 12px;
+  color: var(--text-color);
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+a:hover {
+  color: var(--on-primary);
+}

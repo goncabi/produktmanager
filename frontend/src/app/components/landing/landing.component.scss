@@ -1,0 +1,91 @@
+.landing-page {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+
+  /* Spezifische Farben für Überschriften */
+  h1, h2, h3 {
+    color: #ff9800 !important; /* Orange für Überschriften */
+  }
+
+  /* Paragraphen */
+  p {
+    color: #807f7f !important; /* Helleres Grau für bessere Lesbarkeit */
+  }
+
+  /* Buttons */
+  .mat-button, .mat-raised-button {
+    color: white !important;
+  }
+
+  /* Hero-Text */
+  .hero-content h1 {
+    color: #ff9800 !important; /* Gelb für die Hauptüberschrift */
+  }
+
+
+  /* Links im Footer */
+  footer a {
+    color: #ff9800 !important;
+    text-decoration: none;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    .hero-content {
+      max-width: 500px;
+      text-align: left;
+    }
+
+    .hero-image {
+      width: 250px;
+      margin-left: 2rem;
+    }
+  }
+
+  .features {
+    padding: 3rem;
+    background: #fff;
+
+    .features-grid {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+
+      mat-card {
+        padding: 1rem;
+        text-align: center;
+        width: 250px;
+      }
+    }
+  }
+
+  .testimonials {
+    background: #f9f9f9;
+    padding: 3rem;
+
+    .testimonial {
+      max-width: 500px;
+      margin: auto;
+      padding: 2rem;
+    }
+  }
+
+  footer {
+    padding: 1rem;
+
+    a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
+  }
+}
