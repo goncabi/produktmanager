@@ -1,4 +1,9 @@
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+<div class="mat-elevation-z2">
+  <mat-toolbar>
+    <span>📦 Produktliste</span>
+  </mat-toolbar>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <!-- EAN Column -->
   <ng-container matColumnDef="ean">
     <mat-header-cell *matHeaderCellDef> EAN/GTIN </mat-header-cell>
@@ -8,7 +13,7 @@
   <!-- Category Column -->
   <ng-container matColumnDef="category">
     <mat-header-cell *matHeaderCellDef> Kategorie </mat-header-cell>
-    <mat-cell *matCellDef="let product"> {{ product.category_name }} </mat-cell>
+    <mat-cell *matCellDef="let product"> {{ product.category.name }} </mat-cell>
   </ng-container>
 
   <!-- Product Name Column -->
@@ -28,16 +33,22 @@
   <!-- Manufacturer Column -->
   <ng-container matColumnDef="manufacturer">
     <mat-header-cell *matHeaderCellDef> Hersteller </mat-header-cell>
-    <mat-cell *matCellDef="let product"> {{ product.manufacturer_name }} </mat-cell>
+    <mat-cell *matCellDef="let product"> {{ product.manufacturer.name }} </mat-cell>
   </ng-container>
 
   <!-- Actions Column -->
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef> Aktionen </mat-header-cell>
     <mat-cell *matCellDef="let product">
-      <button mat-icon-button color="primary" (click)="viewDetails(product); $event.stopPropagation()">
+      <div class="action-buttons">
+      <button mat-mini-fab (click)="viewDetails(product); $event.stopPropagation()" matTooltip="Details ansehen">
         <mat-icon>visibility</mat-icon>
       </button>
+      <!-- Borrar producto -->
+      <button mat-mini-fab color="warn" (click)="deleteProduct(product); $event.stopPropagation()" matTooltip="Löschen">
+        <mat-icon>delete</mat-icon>
+      </button>
+      </div>
     </mat-cell>
   </ng-container>
 
@@ -46,5 +57,13 @@
 
   <!-- Fila de la tabla con evento click -->
   <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewDetails(row)"></mat-row>
-
   </table>
+
+  <mat-paginator #paginator
+                 [length]="dataSource.data.length"
+                 [pageIndex]="0"
+                 [pageSize]="10"
+                 [pageSizeOptions]="[5, 10, 20]"
+                 aria-label="Select page">
+  </mat-paginator>
+</div>

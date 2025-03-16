@@ -1,143 +1,74 @@
-<div class="product-details">
-  <h2>Produktdetails</h2>
+<div class="product-details-container">
+  <mat-card class="product-card">
+    <mat-card-title>📦 Produktdetails</mat-card-title>
 
-  <button mat-button color="primary" (click)="editMode = !editMode">
-    {{ editMode ? 'Speichern' : 'Bearbeiten' }}
-  </button>
-  <button mat-button color="warn" *ngIf="editMode" (click)="cancelEdit()">Abbrechen</button>
+    <!-- 📌 Info principal en 2 columnas -->
+    <div class="details-grid">
+      <div class="info-section">
+        <p><strong>EAN:</strong> {{ product?.ean_gtin || 'Keine' }}</p>
+        <p><strong>Kategorie:</strong> {{ product?.category?.name || 'Keine' }}</p>
+        <p><strong>Produktname:</strong> {{ product?.name || 'Keine' }}</p>
+        <p><strong>Alkoholgehalt:</strong> {{ product?.alcohol_volume ? product.alcohol_volume + '%' : 'Keine' }}</p>
+      </div>
 
-  <table>
-    <tr>
-      <td><strong>EAN:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.ean_gtin || 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.ean_gtin">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Kategorie:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.category?.name || 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="editCategoryName">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Produktname:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.name || 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.name">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Bild:</strong></td>
-      <td>
-        <img *ngIf="!editMode && product?.image_url" [src]="product.image_url" alt="{{ product?.name }}" width="50">
-        <input *ngIf="editMode" [(ngModel)]="product.image_url">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>SKU/PLU:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.sku_plu || 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.sku_plu">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Beschreibung:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.description || 'Keine' }}</span>
-        <textarea *ngIf="editMode" [(ngModel)]="product.description"></textarea>
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Preis (Lieferung):</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.price_delivery | currency }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.price_delivery" type="number">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Preis (Abholung):</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.price_pickup | currency }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.price_pickup" type="number">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Gewicht/Volumen:</strong></td>
-      <td>
-        <span *ngIf="!editMode">
-          {{ product?.net_volume_l != null ? product.net_volume_l + ' L' :
-          (product?.net_weight_g != null ? product.net_weight_g + ' g' : 'Keine') }}
-        </span>
-        <input *ngIf="editMode" [(ngModel)]="product.net_weight_g" type="number" placeholder="Gewicht in g">
-        <input *ngIf="editMode" [(ngModel)]="product.net_volume_l" type="number" placeholder="Volumen in L">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Alkoholgehalt:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.alcohol_volume != null ? product.alcohol_volume + ' %' : 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.alcohol_volume" type="number" step="0.1">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Koffeingehalt:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.caffeine_mg != null ? product.caffeine_mg + ' mg' : 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.caffeine_mg" type="number">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Pfandbetrag:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ product?.deposit_amount != null ? product.deposit_amount + ' €' : 'Keine' }}</span>
-        <input *ngIf="editMode" [(ngModel)]="product.deposit_amount" type="number" step="0.01">
-      </td>
-    </tr>
-    <tr>
-    <tr>
-      <td><strong>Zutaten:</strong></td>
-      <td>{{ product.ingredientNames }}</td>
-    </tr>
-    <tr>
-      <td><strong>Nährwerte:</strong></td>
-      <td>
-        Energie: {{ product.nutritionInfo?.energy_kcal }} kcal,
-        Eiweiß: {{ product.nutritionInfo?.protein_g }} g,
-        Fett: {{ product.nutritionInfo?.fat_g }} g,
-        Zucker: {{ product.nutritionInfo?.sugar_g }} g
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Nährwerte:</strong></td>
-      <td>
-        Energie: {{ nutritionInfo?.energy_kcal ?? 'N/A' }} kcal,
-        Eiweiß: {{ nutritionInfo?.protein_g ?? 'N/A' }} g,
-        Fett: {{ nutritionInfo?.fat_g ?? 'N/A' }} g,
-        Zucker: {{ nutritionInfo?.sugar_g ?? 'N/A' }} g
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Hersteller:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ manufacturerName }}</span>
-        <input *ngIf="editMode" [(ngModel)]="editManufacturerName">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Adresse:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ manufacturerAddress }}</span>
-        <input *ngIf="editMode" [(ngModel)]="editManufacturerAddress">
-      </td>
-    </tr>
-    <tr>
-      <td><strong>Land:</strong></td>
-      <td>
-        <span *ngIf="!editMode">{{ manufacturerCountry }}</span>
-        <input *ngIf="editMode" [(ngModel)]="editManufacturerCountry">
-      </td>
-    </tr>
-  </table>
+      <div class="info-section">
+        <p><strong>Preis Lieferung:</strong> {{ product?.price_delivery || 'Keine' }} €</p>
+        <p><strong>Preis Abholung:</strong> {{ product?.price_pickup || 'Keine' }} €</p>
+        <p><strong>Gewicht/Volumen:</strong>
+          {{ product?.net_volume_l ? product.net_volume_l + ' L' : product?.net_weight_g + ' g' }}
+        </p>
+        <p><strong>Pfand:</strong> {{ product?.deposit_amount ? product.deposit_amount + ' €' : 'Keine' }}</p>
+      </div>
+    </div>
+
+    <!-- 🔹 Ingredientes -->
+    <mat-expansion-panel class="ingredients-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title> 🍽️ Zutaten </mat-panel-title>
+      </mat-expansion-panel-header>
+      <p *ngIf="ingredientNames === 'Keine'">Keine Zutaten verfügbar.</p>
+      <ul *ngIf="ingredientNames !== 'Keine'">
+        <li *ngFor="let ingredient of ingredientNames.split(', ')">{{ ingredient }}</li>
+      </ul>
+    </mat-expansion-panel>
+
+    <!-- 🔹 Información Nutricional -->
+    <mat-expansion-panel class="nutrition-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title> 🥗 Nährwerte </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="nutrition-grid">
+        <div><strong>Energie:</strong> {{ product?.nutritionInfo?.energy_kcal ?? 'N/A' }} kcal</div>
+        <div><strong>Eiweiß:</strong> {{ product?.nutritionInfo?.protein_g ?? 'N/A' }} g</div>
+        <div><strong>Fett:</strong> {{ product?.nutritionInfo?.fat_g ?? 'N/A' }} g</div>
+        <div><strong>Gesättigte Fettsäuren:</strong> {{ product?.nutritionInfo?.saturated_fat_g ?? 'N/A' }} g</div>
+        <div><strong>Kohlenhydrate:</strong> {{ product?.nutritionInfo?.carbohydrates_g ?? 'N/A' }} g</div>
+        <div><strong>Zucker:</strong> {{ product?.nutritionInfo?.sugar_g ?? 'N/A' }} g</div>
+        <div><strong>Ballaststoffe:</strong> {{ product?.nutritionInfo?.fiber_g ?? 'N/A' }} g</div>
+        <div><strong>Natrium:</strong> {{ product?.nutritionInfo?.sodium_mg ?? 'N/A' }} mg</div>
+      </div>
+    </mat-expansion-panel>
+
+    <!-- 🏭 Hersteller Panel -->
+    <mat-expansion-panel class="hersteller-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>🏭 Hersteller</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="hersteller-grid">
+        <p><strong>Name:</strong> {{ product?.manufacturer?.name || 'Keine' }}</p>
+        <p><strong>Adresse:</strong> {{ product?.manufacturer?.address || 'Keine' }}</p>
+        <p><strong>Land:</strong> {{ product?.manufacturer?.country || 'Keine' }}</p>
+      </div>
+    </mat-expansion-panel>
+
+    <!-- 🔹 Botones -->
+    <div class="button-group">
+      <button mat-raised-button color="primary">
+        📝 Bearbeiten
+      </button>
+      <button mat-raised-button color="warn">
+        ❌ Löschen
+      </button>
+    </div>
+  </mat-card>
 </div>

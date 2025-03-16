@@ -1,7 +1,20 @@
-.spacer {
-  flex: 1;
-}
-mat-toolbar {
+
+.navbar {
   display: flex;
+  justify-content: center; /* Centra los botones */
   align-items: center;
+  gap: 16px; /* Espaciado entre botones */
+  padding: 8px;
 }
+
+.nav-button {
+  margin: 0 8px; /* Espaciado horizontal */
+  background-color: white !important; /* Fondo blanco para mejor visibilidad */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-button:hover {
+  transform: scale(1.1); /* wird größer */
+}
+

@@ -1,0 +1,39 @@
+.product-details-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+.details-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-left: 20px;
+
+}
+.product-card {
+  width: 80%;
+  padding: 20px;
+  background-color: var(--mat-sys-surface-container);
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+/* Paneles */
+.ingredients-panel, .nutrition-panel, .hersteller-panel {
+  margin-top: 15px;
+}
+
+/* 📌 Estilo de Nährwerte en dos columnas */
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}

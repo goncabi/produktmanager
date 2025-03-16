@@ -1,5 +1,25 @@
-mat-toolbar {
-  font-size: 1.5rem;
+.app-header {
+  background-color: var(--mat-sys-primary); /* Usa el color primario del tema */
+  color: var(--mat-sys-on-primary);
+  padding: 15px 25px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  box-shadow: var(--mat-sys-level2); /* Sombra elegante */
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 100px;  /* Ajusta el tamaño */
+  height: auto;  /* Mantiene la proporción */
+  border-radius: 10px /* Redondea los bordes */
+}
+
+.app-title {
+  font-size: var(--mat-sys-title-large); /* Usa la tipografía de Material */
+  font-weight: 600;
 }

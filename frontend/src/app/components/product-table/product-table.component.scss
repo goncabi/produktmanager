@@ -1,12 +1,20 @@
-mat-card {
-  margin: 20px;
-  padding: 10px;
+.product-details-container {
+  padding: 20px;
+  max-width: 500px;
+  margin: auto;
 }
 
-mat-table {
+.full-width {
   width: 100%;
 }
 
-img {
-  border-radius: 5px;
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
+.action-buttons button {
+  margin-right: 8px; /* Espacio entre botones */
+}
+

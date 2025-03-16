@@ -1,10 +1,17 @@
-<mat-toolbar color="accent">
-  <button mat-icon-button>
-    <mat-icon>menu</mat-icon>
-  </button>
-  <span>Navigation</span>
-  <span class="spacer"></span>
-  <button mat-icon-button>
+<mat-toolbar color="primary" class="navbar">
+  <a class="nav-button" mat-mini-fab matTooltip="Startseite" routerLink="/landing">
+    <mat-icon>home</mat-icon>
+  </a>
+
+  <a mat-mini-fab class="nav-button" routerLink="/products" matTooltip="Produkte anzeigen">
+    <mat-icon>inventory</mat-icon>
+  </a>
+
+  <a mat-mini-fab class="nav-button" routerLink="/add-product" matTooltip="Produkt hinzufügen">
+    <mat-icon>add</mat-icon>
+  </a>
+
+  <a mat-mini-fab class="nav-button" routerLink="/search" matTooltip="Produkte suchen">
     <mat-icon>search</mat-icon>
-  </button>
+  </a>
 </mat-toolbar>

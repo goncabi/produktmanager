@@ -12,53 +12,59 @@ router.get("/", async (req, res) => {
                    m.id AS manufacturer_id, m.name AS manufacturer_name,
                    m.address AS manufacturer_address, m.country AS manufacturer_country
             FROM products p
-                     LEFT JOIN categories c ON p.category_id = c.id
-                     LEFT JOIN manufacturers m ON p.manufacturer_id = m.id;
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN manufacturers m ON p.manufacturer_id = m.id;
         `;
         const productsResult = await pool.query(productsQuery);
         const products = productsResult.rows;
 
-        for (let product of products) {
-            // Obtener ingredientes del producto
-            const ingredientsQuery = `
-                SELECT name FROM ingredients WHERE product_id = $1;
-            `;
-            const ingredientsResult = await pool.query(ingredientsQuery, [product.id]);
-            product.ingredients = ingredientsResult.rows.map(row => row.name); // Solo devolver nombres
+        // 📌 Obtener ingredientes y nutrición en batch para mejor rendimiento
+        const productIds = products.map(p => p.id);
 
-            // Obtener información nutricional del producto
-            const nutritionQuery = `
-                SELECT energy_kcal, protein_g, fat_g, saturated_fat_g,
-                       carbohydrates_g, sugar_g, fiber_g, sodium_mg
-                FROM nutrition_info WHERE product_id = $1;
-            `;
-            const nutritionResult = await pool.query(nutritionQuery, [product.id]);
-            product.nutritionInfo = nutritionResult.rows[0] || null; // Si no hay datos, poner `null`
+        const ingredientsQuery = `
+            SELECT product_id, name FROM ingredients WHERE product_id = ANY($1);
+        `;
+        const ingredientsResult = await pool.query(ingredientsQuery, [productIds]);
+        const ingredientsMap = {};
+        ingredientsResult.rows.forEach(row => {
+            if (!ingredientsMap[row.product_id]) {
+                ingredientsMap[row.product_id] = [];
+            }
+            ingredientsMap[row.product_id].push({ name: row.name });
+        });
 
-            // 📌 Agrupar los datos de la categoría
-            product.category = {
+        const nutritionQuery = `
+            SELECT product_id, energy_kcal, protein_g, fat_g, saturated_fat_g,
+                   carbohydrates_g, sugar_g, fiber_g, sodium_mg
+            FROM nutrition_info WHERE product_id = ANY($1);
+        `;
+        const nutritionResult = await pool.query(nutritionQuery, [productIds]);
+        const nutritionMap = {};
+        nutritionResult.rows.forEach(row => {
+            nutritionMap[row.product_id] = row;
+        });
+
+        // 📌 Formatear los datos
+        const formattedProducts = products.map(product => ({
+            ...product,
+            ingredients: ingredientsMap[product.id] || [],
+            nutritionInfo: nutritionMap[product.id] || null,
+            category: {
                 id: product.category_id,
                 name: product.category_name
-            };
-            delete product.category_id;
-            delete product.category_name;
-
-            // 📌 Agrupar los datos del fabricante
-            product.manufacturer = {
+            },
+            manufacturer: {
                 id: product.manufacturer_id,
                 name: product.manufacturer_name,
                 address: product.manufacturer_address,
                 country: product.manufacturer_country
-            };
-            delete product.manufacturer_id;
-            delete product.manufacturer_name;
-            delete product.manufacturer_address;
-            delete product.manufacturer_country;
-        }
+            }
+        }));
 
-        res.json(products);
+        res.json(formattedProducts);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error al obtener productos:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 });
 
@@ -85,12 +91,12 @@ router.get("/:id", async (req, res) => {
 
         let product = productResult.rows[0];
 
-        // Obtener ingredientes del producto
+        // 📌 Obtener ingredientes
         const ingredientsQuery = `SELECT name FROM ingredients WHERE product_id = $1;`;
         const ingredientsResult = await pool.query(ingredientsQuery, [id]);
-        product.ingredients = ingredientsResult.rows.map(row => row.name); // Solo nombres
+        product.ingredients = ingredientsResult.rows.map(row => ({ name: row.name }));
 
-        // Obtener información nutricional del producto
+        // 📌 Obtener información nutricional
         const nutritionQuery = `
             SELECT energy_kcal, protein_g, fat_g, saturated_fat_g, 
                    carbohydrates_g, sugar_g, fiber_g, sodium_mg 
@@ -99,7 +105,7 @@ router.get("/:id", async (req, res) => {
         const nutritionResult = await pool.query(nutritionQuery, [id]);
         product.nutritionInfo = nutritionResult.rows[0] || null;
 
-        // 📌 Agrupar los datos de la categoría
+        // 📌 Agrupar datos correctamente
         product.category = {
             id: product.category_id,
             name: product.category_name
@@ -107,7 +113,6 @@ router.get("/:id", async (req, res) => {
         delete product.category_id;
         delete product.category_name;
 
-        // 📌 Agrupar los datos del fabricante
         product.manufacturer = {
             id: product.manufacturer_id,
             name: product.manufacturer_name,
@@ -121,7 +126,8 @@ router.get("/:id", async (req, res) => {
 
         res.json(product);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error al obtener producto:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 });
 
