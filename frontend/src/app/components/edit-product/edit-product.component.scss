@@ -38,19 +38,28 @@
   gap: 12px;
 }
 
-/* 📌 Nährwerte */
-.nutrition-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  padding: 10px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-
 /* 📌 Botones */
 .button-group {
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+}
+
+.product-fields {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
 }

@@ -55,18 +55,28 @@ export class ProductTableComponent implements OnInit {
   }
 
   viewDetails(product: Product): void {
-    if (product && product.id !== undefined && product.id !== null) {
-      console.log("Navegando a detalles del producto con ID:", product.id); // Debug
-      this.router.navigate(['/product', product.id]);
+    if (product && product.product_id !== undefined && product.product_id !== null) {
+      console.log("Navegando a detalles del producto con ID:", product.product_id); // Debug
+      this.router.navigate(['/product', product.product_id]);
     } else {
       console.error("Error: El producto no tiene un ID válido:", product);
     }
   }
+
+  editProduct(product: Product): void {
+    if (product && product.product_id !== undefined && product.product_id !== null) {
+      console.log("Navegando a la edición del Producto mit ID:", product.product_id);
+      this.router.navigate(['/edit-product', product.product_id]); // Ajusta la ruta según tu app
+    } else {
+      console.error("Fehler: Das Produkt hat keine gültige ID:", product);
+    }
+  }
+
   deleteProduct(product: Product): void {
     const confirmDelete = confirm(`Möchtest du das Produkt "${product.name}" wirklich löschen?`);
     if (!confirmDelete) return;
 
-    this.productService.deleteProduct(product.id).subscribe({
+    this.productService.deleteProduct(product.product_id).subscribe({
       next: () => {
         console.log(`Produkt ${product.name} gelöscht.`);
         this.loadProducts(); // Recargar la tabla después de eliminar

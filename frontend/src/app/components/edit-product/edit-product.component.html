@@ -16,67 +16,60 @@
         </mat-form-field>
       </div>
 
-      <!-- 🛠️ Grilla de Campos -->
-      <mat-grid-list cols="2" rowHeight="fit">
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>EAN</mat-label>
-            <input matInput formControlName="ean_gtin">
-          </mat-form-field>
+      <div class="product-details-section">
+        <h3>📦 Produktdetails</h3>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Kategorie</mat-label>
-            <input matInput formControlName="category">
-          </mat-form-field>
+        <div class="product-fields">
+          <!-- Primera columna -->
+          <div class="column">
+            <mat-form-field appearance="outline">
+              <mat-label>EAN</mat-label>
+              <input matInput formControlName="ean_gtin">
+            </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Produktname</mat-label>
-            <input matInput formControlName="name">
-          </mat-form-field>
-        </mat-grid-tile>
+            <div formGroupName="category">
+              <mat-form-field appearance="outline">
+                <mat-label>Kategorie</mat-label>
+                <input matInput formControlName="name">
+              </mat-form-field>
+            </div>
 
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Alkoholgehalt (%)</mat-label>
-            <input matInput type="number" formControlName="alcohol_volume">
-          </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Produktname</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Pfand (€)</mat-label>
-            <input matInput type="number" formControlName="deposit_amount">
-          </mat-form-field>
+          <!-- Segunda columna -->
+          <div class="column">
+            <mat-form-field appearance="outline">
+              <mat-label>Preis Lieferung (€)</mat-label>
+              <input matInput type="number" formControlName="price_delivery">
+            </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Koffein (mg)</mat-label>
-            <input matInput type="number" formControlName="caffeine_mg">
-          </mat-form-field>
-        </mat-grid-tile>
-      </mat-grid-list>
+            <mat-form-field appearance="outline">
+              <mat-label>Preis Abholung (€)</mat-label>
+              <input matInput type="number" formControlName="price_pickup">
+            </mat-form-field>
 
-      <!-- 🏭 Hersteller -->
-      <h3>🏭 Hersteller</h3>
-      <mat-grid-list cols="3" rowHeight="fit">
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="manufacturer.name">
-          </mat-form-field>
-        </mat-grid-tile>
+            <mat-form-field appearance="outline">
+              <mat-label>Alkoholgehalt (%)</mat-label>
+              <input matInput type="number" formControlName="alcohol_volume">
+            </mat-form-field>
 
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Adresse</mat-label>
-            <input matInput formControlName="manufacturer.address">
-          </mat-form-field>
-        </mat-grid-tile>
+            <mat-form-field appearance="outline">
+              <mat-label>Koffein (mg)</mat-label>
+              <input matInput type="number" formControlName="caffeine_mg">
+            </mat-form-field>
 
-        <mat-grid-tile>
-          <mat-form-field appearance="outline">
-            <mat-label>Land</mat-label>
-            <input matInput formControlName="manufacturer.country">
-          </mat-form-field>
-        </mat-grid-tile>
-      </mat-grid-list>
+            <mat-form-field appearance="outline">
+              <mat-label>Pfand (€)</mat-label>
+              <input matInput type="number" formControlName="deposit_amount">
+            </mat-form-field>
+
+          </div>
+        </div>
+      </div>
 
       <!-- 🍽️ Zutaten -->
       <h3>🍽️ Zutaten</h3>
@@ -85,30 +78,70 @@
         <input matInput formControlName="ingredients">
       </mat-form-field>
 
-      <!-- 🥗 Nährwerte -->
       <h3>🥗 Nährwerte</h3>
-      <mat-grid-list cols="3" rowHeight="fit">
-        <mat-grid-tile>
+      <div formGroupName="nutritionInfo" class="nutrition-form">
+        <div class="nutrition-grid">
           <mat-form-field appearance="outline">
             <mat-label>Energie (kcal)</mat-label>
-            <input matInput type="number" formControlName="nutrition_info.energy_kcal">
+            <input matInput type="number" formControlName="energy_kcal">
           </mat-form-field>
-        </mat-grid-tile>
 
-        <mat-grid-tile>
           <mat-form-field appearance="outline">
             <mat-label>Eiweiß (g)</mat-label>
-            <input matInput type="number" formControlName="nutrition_info.protein_g">
+            <input matInput type="number" formControlName="protein_g">
           </mat-form-field>
-        </mat-grid-tile>
 
-        <mat-grid-tile>
           <mat-form-field appearance="outline">
             <mat-label>Fett (g)</mat-label>
-            <input matInput type="number" formControlName="nutrition_info.fat_g">
+            <input matInput type="number" formControlName="fat_g">
           </mat-form-field>
-        </mat-grid-tile>
-      </mat-grid-list>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Gesättigte Fettsäuren (g)</mat-label>
+            <input matInput type="number" formControlName="saturated_fat_g">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Kohlenhydrate (g)</mat-label>
+            <input matInput type="number" formControlName="carbohydrates_g">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Zucker (g)</mat-label>
+            <input matInput type="number" formControlName="sugar_g">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ballaststoffe (g)</mat-label>
+            <input matInput type="number" formControlName="fiber_g">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Natrium (mg)</mat-label>
+            <input matInput type="number" formControlName="sodium_mg">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- 🏭 Hersteller -->
+      <h3>🏭 Hersteller</h3>
+      <div formGroupName="manufacturer">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="address">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Land</mat-label>
+          <input matInput formControlName="country">
+        </mat-form-field>
+      </div>
+
 
       <!-- 🔹 Botones -->
       <div class="button-group">

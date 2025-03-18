@@ -5,7 +5,6 @@ import { Product, Ingredient } from '../../interfaces/models';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
-import {MatGridList, MatGridTile} from '@angular/material/grid-list';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCardModule} from '@angular/material/card';
 
@@ -15,11 +14,11 @@ import {MatCardModule} from '@angular/material/card';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule,MatGridList, MatGridTile, MatExpansionModule, MatCardModule] // Agregamos CommonModule y FormsModule
+  imports: [CommonModule, FormsModule, MatButtonModule, MatExpansionModule, MatCardModule] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product = {
-    id: 0,
+    product_id: 0,
     ean_gtin: '',
     sku_plu: '',
     name: '',
@@ -44,8 +43,8 @@ export class ProductDetailsComponent implements OnInit {
       fiber_g: 0,
       sodium_mg: 0
     }, // ✅ Se inicializa con valores predeterminados
-    category: { id: 0, name: 'Keine' },
-    manufacturer: { id: 0, name: 'Keine', address: 'Keine', country: 'Keine' }
+    category: { category_id: 0, name: 'Keine' },
+    manufacturer: { manufacturer_id: 0, name: 'Keine', address: 'Keine', country: 'Keine' }
   };
   ingredientNames: string = '';
   editMode = false;
@@ -76,13 +75,10 @@ export class ProductDetailsComponent implements OnInit {
 
           this.product = product;
 
-          // 🔹 Convertir `ingredients` en un array de nombres
+
+          // Aseguramos que `ingredients` sea un array de objetos `Ingredient`
           if (Array.isArray(product.ingredients)) {
-            this.ingredientNames = product.ingredients
-              .map(i => (typeof i === 'string' ? i : (i as Ingredient).name))
-              .join(', ') || 'Keine';
-          } else {
-            this.ingredientNames = 'Keine';
+            this.product.ingredients = product.ingredients.map(i => ({ name: i.name }));
           }
         },
         error => {

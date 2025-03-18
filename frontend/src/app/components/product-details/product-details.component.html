@@ -5,19 +5,19 @@
     <!-- 📌 Info principal en 2 columnas -->
     <div class="details-grid">
       <div class="info-section">
-        <p><strong>EAN:</strong> {{ product?.ean_gtin || 'Keine' }}</p>
-        <p><strong>Kategorie:</strong> {{ product?.category?.name || 'Keine' }}</p>
-        <p><strong>Produktname:</strong> {{ product?.name || 'Keine' }}</p>
-        <p><strong>Alkoholgehalt:</strong> {{ product?.alcohol_volume ? product.alcohol_volume + '%' : 'Keine' }}</p>
+        <p><strong>EAN:</strong> {{ product.ean_gtin || 'Keine' }}</p>
+        <p><strong>Kategorie:</strong> {{ product.category.name || 'Keine' }}</p>
+        <p><strong>Produktname:</strong> {{ product.name || 'Keine' }}</p>
+        <p><strong>Alkoholgehalt:</strong> {{ product.alcohol_volume + '%' || 'Keine' }}</p>
       </div>
 
       <div class="info-section">
-        <p><strong>Preis Lieferung:</strong> {{ product?.price_delivery || 'Keine' }} €</p>
-        <p><strong>Preis Abholung:</strong> {{ product?.price_pickup || 'Keine' }} €</p>
+        <p><strong>Preis Lieferung:</strong> {{ product.price_delivery || 'Keine' }} €</p>
+        <p><strong>Preis Abholung:</strong> {{ product.price_pickup || 'Keine' }} €</p>
         <p><strong>Gewicht/Volumen:</strong>
-          {{ product?.net_volume_l ? product.net_volume_l + ' L' : product?.net_weight_g + ' g' }}
+          {{ product.net_volume_l  + ' L' || product.net_weight_g + ' g' }}
         </p>
-        <p><strong>Pfand:</strong> {{ product?.deposit_amount ? product.deposit_amount + ' €' : 'Keine' }}</p>
+        <p><strong>Pfand:</strong> {{ product.deposit_amount  + ' €' || 'Keine' }}</p>
       </div>
     </div>
 
@@ -28,7 +28,7 @@
       </mat-expansion-panel-header>
       <p *ngIf="ingredientNames === 'Keine'">Keine Zutaten verfügbar.</p>
       <ul *ngIf="ingredientNames !== 'Keine'">
-        <li *ngFor="let ingredient of ingredientNames.split(', ')">{{ ingredient }}</li>
+        <li *ngFor="let ingredient of product.ingredients">{{ ingredient.name }}</li>
       </ul>
     </mat-expansion-panel>
 
@@ -38,14 +38,14 @@
         <mat-panel-title> 🥗 Nährwerte </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="nutrition-grid">
-        <div><strong>Energie:</strong> {{ product?.nutritionInfo?.energy_kcal ?? 'N/A' }} kcal</div>
-        <div><strong>Eiweiß:</strong> {{ product?.nutritionInfo?.protein_g ?? 'N/A' }} g</div>
-        <div><strong>Fett:</strong> {{ product?.nutritionInfo?.fat_g ?? 'N/A' }} g</div>
-        <div><strong>Gesättigte Fettsäuren:</strong> {{ product?.nutritionInfo?.saturated_fat_g ?? 'N/A' }} g</div>
-        <div><strong>Kohlenhydrate:</strong> {{ product?.nutritionInfo?.carbohydrates_g ?? 'N/A' }} g</div>
-        <div><strong>Zucker:</strong> {{ product?.nutritionInfo?.sugar_g ?? 'N/A' }} g</div>
-        <div><strong>Ballaststoffe:</strong> {{ product?.nutritionInfo?.fiber_g ?? 'N/A' }} g</div>
-        <div><strong>Natrium:</strong> {{ product?.nutritionInfo?.sodium_mg ?? 'N/A' }} mg</div>
+        <div><strong>Energie:</strong> {{ product.nutritionInfo?.energy_kcal ?? 'N/A' }} kcal</div>
+        <div><strong>Eiweiß:</strong> {{ product.nutritionInfo?.protein_g ?? 'N/A' }} g</div>
+        <div><strong>Fett:</strong> {{ product.nutritionInfo?.fat_g ?? 'N/A' }} g</div>
+        <div><strong>Gesättigte Fettsäuren:</strong> {{ product.nutritionInfo?.saturated_fat_g ?? 'N/A' }} g</div>
+        <div><strong>Kohlenhydrate:</strong> {{ product.nutritionInfo?.carbohydrates_g ?? 'N/A' }} g</div>
+        <div><strong>Zucker:</strong> {{ product.nutritionInfo?.sugar_g ?? 'N/A' }} g</div>
+        <div><strong>Ballaststoffe:</strong> {{ product.nutritionInfo?.fiber_g ?? 'N/A' }} g</div>
+        <div><strong>Natrium:</strong> {{ product.nutritionInfo?.sodium_mg ?? 'N/A' }} mg</div>
       </div>
     </mat-expansion-panel>
 
@@ -55,9 +55,9 @@
         <mat-panel-title>🏭 Hersteller</mat-panel-title>
       </mat-expansion-panel-header>
       <div class="hersteller-grid">
-        <p><strong>Name:</strong> {{ product?.manufacturer?.name || 'Keine' }}</p>
-        <p><strong>Adresse:</strong> {{ product?.manufacturer?.address || 'Keine' }}</p>
-        <p><strong>Land:</strong> {{ product?.manufacturer?.country || 'Keine' }}</p>
+        <p><strong>Name:</strong> {{ product.manufacturer.name || 'Keine' }}</p>
+        <p><strong>Adresse:</strong> {{ product.manufacturer.address || 'Keine' }}</p>
+        <p><strong>Land:</strong> {{ product.manufacturer.country || 'Keine' }}</p>
       </div>
     </mat-expansion-panel>
 
