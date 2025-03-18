@@ -1,0 +1,103 @@
+<div class="create-product-container">
+  <mat-card class="create-product-card">
+    <mat-card-title>➕ Neues Produkt hinzufügen</mat-card-title>
+
+    <form [formGroup]="addProductForm" (ngSubmit)="submitForm()" class="add-form">
+
+      <!-- 📸 Bild -->
+      <div class="image-section">
+        <img *ngIf="addProductForm.get('image_url')?.value"
+             [src]="addProductForm.get('image_url')?.value"
+             alt="Produktbild" class="product-image">
+        <p *ngIf="!addProductForm.get('image_url')?.value">Kein Bild verfügbar</p>
+        <mat-form-field appearance="outline">
+          <mat-label>Bild-URL</mat-label>
+          <input matInput formControlName="image_url">
+        </mat-form-field>
+      </div>
+
+      <div class="product-details-section">
+        <h3>📦 Produktdetails</h3>
+
+        <div class="product-fields">
+          <div class="column">
+            <mat-form-field appearance="outline">
+              <mat-label>EAN</mat-label>
+              <input matInput formControlName="ean_gtin">
+            </mat-form-field>
+
+            <div formGroupName="category">
+              <mat-form-field appearance="outline">
+                <mat-label>Kategorie</mat-label>
+                <input matInput formControlName="name">
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Produktname</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
+          </div>
+
+          <div class="column">
+            <mat-form-field appearance="outline">
+              <mat-label>Preis Lieferung (€)</mat-label>
+              <input matInput type="number" formControlName="price_delivery">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Preis Abholung (€)</mat-label>
+              <input matInput type="number" formControlName="price_pickup">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Brutto-Gewicht (g)</mat-label>
+              <input matInput type="number" formControlName="price_pickup">
+            </mat-form-field>  <mat-form-field appearance="outline">
+            <mat-label>Brutto-Volumen (l)</mat-label>
+            <input matInput type="number" formControlName="price_pickup">
+          </mat-form-field>  <mat-form-field appearance="outline">
+            <mat-label>Netto-Gewicht(g)</mat-label>
+            <input matInput type="number" formControlName="price_pickup">
+          </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🍽️ Zutaten -->
+      <h3>🍽️ Zutaten</h3>
+      <mat-form-field appearance="outline">
+        <mat-label>Zutaten (kommagetrennt)</mat-label>
+        <input matInput formControlName="ingredients">
+      </mat-form-field>
+
+      <!-- 🏭 Hersteller -->
+      <h3>🏭 Hersteller</h3>
+      <div formGroupName="manufacturer">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="address">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Land</mat-label>
+          <input matInput formControlName="country">
+        </mat-form-field>
+      </div>
+
+      <!-- 🔹 Botones -->
+      <div class="button-group">
+        <button mat-raised-button color="primary" type="submit" (click)="submitForm()">
+          ✅ Speichern
+        </button>
+        <button mat-raised-button color="warn" type="button" (click)="cancelCreation()">
+          ❌ Abbrechen
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
