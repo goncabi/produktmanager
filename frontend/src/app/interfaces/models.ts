@@ -14,19 +14,19 @@ export interface NutritionInfo {
 }
 
 export interface Manufacturer {
-  id: number;
+  manufacturer_id: number;
   name: string;
   address: string;
   country: string;
 }
 
 export interface Category {
-  id: number;
+  category_id: number;
   name: string;
 }
 
 export interface Product {
-  id: number;
+  product_id: number;
   ean_gtin: string;
   sku_plu?: string;
   name: string;
@@ -40,7 +40,7 @@ export interface Product {
   alcohol_volume?: number;
   caffeine_mg?: number;
   deposit_amount?: number;
-  ingredients: string[]; // 🛠️ Cambiado a array de strings
+  ingredients: Ingredient[]; // 🛠️ Cambiado a array de strings
   nutritionInfo?: NutritionInfo;
   category: Category;
   manufacturer: Manufacturer;

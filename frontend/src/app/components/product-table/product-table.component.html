@@ -41,13 +41,21 @@
     <mat-header-cell *matHeaderCellDef> Aktionen </mat-header-cell>
     <mat-cell *matCellDef="let product">
       <div class="action-buttons">
+        <!-- Ver producto -->
       <button mat-mini-fab (click)="viewDetails(product); $event.stopPropagation()" matTooltip="Details ansehen">
         <mat-icon>visibility</mat-icon>
       </button>
-      <!-- Borrar producto -->
+
+        <!-- Editar producto -->
+        <button mat-mini-fab color="warn" (click)="editProduct(product); $event.stopPropagation()" matTooltip="Bearbeiten">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <!-- Borrar producto -->
       <button mat-mini-fab color="warn" (click)="deleteProduct(product); $event.stopPropagation()" matTooltip="Löschen">
         <mat-icon>delete</mat-icon>
       </button>
+
       </div>
     </mat-cell>
   </ng-container>
