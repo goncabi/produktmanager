@@ -8,8 +8,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltip} from '@angular/material/tooltip';
-
-
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -72,20 +71,30 @@ export class ProductTableComponent implements OnInit {
     }
   }
 
-  deleteProduct(product: Product): void {
-    const confirmDelete = confirm(`Möchtest du das Produkt "${product.name}" wirklich löschen?`);
-    if (!confirmDelete) return;
 
-    this.productService.deleteProduct(product.product_id).subscribe({
-      next: () => {
-        console.log(`Produkt ${product.name} gelöscht.`);
-        this.loadProducts(); // Recargar la tabla después de eliminar
-      },
-      error: (err) => {
-        console.error("Fehler beim Löschen des Produkts:", err);
-        alert("Fehler beim Löschen des Produkts.");
+  deleteProduct(product: Product): void {
+    Swal.fire({
+      title: 'Bist du sicher?',
+      text: `Möchtest du das Produkt "${product.name}" wirklich löschen?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ja, löschen!',
+      cancelButtonText: 'Abbrechen',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productService.deleteProduct(product.product_id).subscribe({
+          next: () => {
+            Swal.fire('Gelöscht!', 'Das Produkt wurde erfolgreich gelöscht.', 'success');
+            this.loadProducts(); // Recargar la tabla después de eliminar
+          },
+          error: (err) => {
+            console.error("Fehler beim Löschen des Produkts:", err);
+            Swal.fire('Fehler', 'Das Produkt konnte nicht gelöscht werden.', 'error');
+          }
+        });
       }
     });
   }
-
 }

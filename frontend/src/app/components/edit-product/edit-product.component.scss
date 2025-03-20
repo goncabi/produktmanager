@@ -14,12 +14,14 @@
 /* 📸 Imagen del producto */
 .image-section {
   text-align: center;
+  margin-top: 20px;
   margin-bottom: 15px;
 }
 
 .product-image {
-  width: 150px;
+  width: 250px;
   height: auto;
+  margin-bottom: 15px;
   border-radius: 8px;
   box-shadow: var(--mat-sys-level2);
 }
@@ -27,10 +29,12 @@
 /* 📌 Formulario de dos columnas */
 .edit-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   padding: 15px;
+
 }
+
 
 .form-section {
   display: flex;
@@ -46,9 +50,11 @@
 }
 
 .product-fields {
-  display: flex;
+  display: grid;
   justify-content: space-between;
   gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
 }
 
 .column {

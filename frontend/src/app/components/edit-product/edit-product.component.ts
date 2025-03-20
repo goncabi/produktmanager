@@ -47,6 +47,9 @@ export class EditProductComponent implements OnInit {
       image_url: [''],
       price_delivery: [0],
       price_pickup: [0],
+      net_volume_l: [0],
+      net_weight_g: [0],
+      gross_weight_g: [0],
       alcohol_volume: [null],
       caffeine_mg: [null],
       deposit_amount: [null],
@@ -79,9 +82,13 @@ export class EditProductComponent implements OnInit {
           this.editProductForm.patchValue({
             ...product,
             name: this.capitalizeWords(product.name),
-            category: {name: this.capitalizeWords(product.category.name)},
-            manufacturer: {name: this.capitalizeWords(product.manufacturer.name)},
-            ingredients: Array.isArray(product.ingredients)
+            category: { name: this.capitalizeWords(product.category.name) },
+            manufacturer: {
+              name: this.capitalizeWords(product.manufacturer.name),
+              address: product.manufacturer.address, // ✅ Ahora sí se establece la dirección
+              country: product.manufacturer.country // ✅ Ahora sí se establece el país
+            },
+          ingredients: Array.isArray(product.ingredients)
               ? product.ingredients.map((ing: any) => this.capitalizeWords(ing.name)).join(', ')
               : '', // Si no hay ingredientes, dejamos el campo vacío
             nutritionInfo: {
@@ -99,22 +106,47 @@ export class EditProductComponent implements OnInit {
       });
     }
   }
-    submitForm(): void {
+
+  submitForm(): void {
     if (this.editProductForm.valid) {
       const updatedProduct = {
         ...this.editProductForm.value,
-        ingredients: this.editProductForm.value.ingredients
-          ? this.editProductForm.value.ingredients.split(',').map((name: string) => ({ name: name.trim() }))
-          : [] // Si el campo está vacío, enviamos un array vacío
+        ingredients: this.convertIngredientsToArray(this.editProductForm.value.ingredients)
       };
 
+      console.log("✅ Datos corregidos antes de enviar:", JSON.stringify(updatedProduct, null, 2));
+
       this.productService.updateProduct(this.productId, updatedProduct).subscribe(() => {
-        this.router.navigate(['/products']); // 🔹 Redirigir después de guardar
+        this.router.navigate(['/products']);
       });
     }
   }
 
-  cancelEdit(): void {
+// 🔹 Función para convertir ingredientes a un array de objetos correctamente
+  convertIngredientsToArray(ingredients: any): { name: string }[] {
+    if (!ingredients) return [];
+
+    if (Array.isArray(ingredients)) {
+      return ingredients.map(ing => {
+        if (typeof ing === "string") {
+          return { name: ing.trim() };
+        }
+        if (typeof ing === "object" && ing.name && typeof ing.name === "string") {
+          return { name: ing.name.trim() }; // ✅ Si ya está en el formato correcto, no lo toca.
+        }
+        return { name: JSON.stringify(ing).trim() }; // 🔥 Evita que se aniden objetos extra.
+      });
+    }
+
+    if (typeof ingredients === "string") {
+      return ingredients.split(",").map((name: string) => ({ name: name.trim() }));
+    }
+
+    return [];
+  }
+
+
+    cancelEdit(): void {
     this.router.navigate(['/products']);
   }
 

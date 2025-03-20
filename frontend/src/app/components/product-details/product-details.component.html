@@ -4,6 +4,17 @@
 
     <!-- 📌 Info principal en 2 columnas -->
     <div class="details-grid">
+      <!-- 📸 Imagen mejorada -->
+      <div class="image-container">
+        <img *ngIf="product.image_url; else noImage"
+             [src]="product.image_url"
+             alt="Produktbild"
+             class="product-image">
+        <ng-template #noImage>
+          <img src="assets/images/no-image-placeholder.png" alt="Kein Bild verfügbar" class="product-image">
+        </ng-template>
+      </div>
+
       <div class="info-section">
         <p><strong>EAN:</strong> {{ product.ean_gtin || 'Keine' }}</p>
         <p><strong>Kategorie:</strong> {{ product.category.name || 'Keine' }}</p>
@@ -63,10 +74,10 @@
 
     <!-- 🔹 Botones -->
     <div class="button-group">
-      <button mat-raised-button color="primary">
+      <button mat-raised-button color="primary" (click)="editProduct(product); $event.stopPropagation()">
         📝 Bearbeiten
       </button>
-      <button mat-raised-button color="warn">
+      <button mat-raised-button color="warn" (click)="deleteProduct(product); $event.stopPropagation()">
         ❌ Löschen
       </button>
     </div>

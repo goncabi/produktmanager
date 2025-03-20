@@ -5,12 +5,32 @@
   margin-top: 20px;
   margin-left: 20px;
 }
-.details-grid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-left: 20px;
+.image-section {
+  text-align: center;
+  margin-bottom: 15px;
 
 }
+.product-image {
+  width: 220px;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: var(--mat-sys-level2);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 2 columnas */
+  grid-template-rows: repeat(3, auto); /* 3 filas dinámicas */
+  gap: 15px; /* Espacio entre celdas */
+  margin-left: 20px;
+  /* 📌 Formulario de dos columnas */
+
+  font-size: 1rem; /* Aumentar tamaño del texto */
+  font-weight: 400; /* Un poco más grueso */
+  align-items: center; /* Alinear verticalmente */
+}
+
 .product-card {
   width: 80%;
   padding: 20px;
@@ -31,9 +51,8 @@
 /* 📌 Estilo de Nährwerte en dos columnas */
 .nutrition-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: (auto-fit, minmax(200px, 1fr));
   gap: 8px;
   padding: 10px;
-  background-color: #f5f5f5;
   border-radius: 8px;
 }

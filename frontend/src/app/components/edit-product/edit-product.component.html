@@ -38,9 +38,28 @@
               <mat-label>Produktname</mat-label>
               <input matInput formControlName="name">
             </mat-form-field>
-          </div>
 
-          <!-- Segunda columna -->
+
+          <mat-form-field appearance="outline">
+            <mat-label>Brutto-Gewicht (g)</mat-label>
+            <input matInput formControlName="net_weight_g">
+          </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+          <mat-label>Brutto-Volumen (l)</mat-label>
+          <input matInput formControlName="net_volume_l">
+        </mat-form-field>
+
+
+      <mat-form-field appearance="outline">
+        <mat-label>Netto-Gewicht (g)</mat-label>
+        <input matInput formControlName="gross_weight_g">
+      </mat-form-field>
+
+    </div>
+
+        <!-- Segunda columna -->
           <div class="column">
             <mat-form-field appearance="outline">
               <mat-label>Preis Lieferung (€)</mat-label>

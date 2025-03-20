@@ -421,9 +421,26 @@ router.put("/:id", async (req, res) => {
         if (ingredients.length > 0) {
             // Limpiar los ingredientes existentes y luego agregar los nuevos
             await pool.query(`DELETE FROM product_ingredients WHERE product_id = $1;`, [product_id]);
+
             for (const ingredient of ingredients) {
+                let ingredientName = ingredient;
+
+                // 🔥 Si el ingrediente es un objeto con `name`, extraemos el nombre
+                if (typeof ingredient === 'object' && ingredient.name) {
+                    ingredientName = ingredient.name;
+                }
+
+                // 🔥 Si el nombre todavía parece un string JSON, lo parseamos
+                try {
+                    const parsed = JSON.parse(ingredientName);
+                    ingredientName = parsed.name || ingredientName;
+                } catch (e) {
+                    // Si no es JSON, seguimos normal
+                }
+
+                // Buscar si el ingrediente ya existe
                 const ingredientResult = await pool.query(
-                    `SELECT ingredient_id FROM ingredients WHERE name = $1;`, [ingredient]
+                    `SELECT ingredient_id FROM ingredients WHERE name = $1;`, [ingredientName]
                 );
 
                 let ingredient_id;
@@ -431,18 +448,19 @@ router.put("/:id", async (req, res) => {
                     ingredient_id = ingredientResult.rows[0].ingredient_id;
                 } else {
                     const insertIngredientResult = await pool.query(
-                        `INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id;`, [ingredient]
+                        `INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id;`, [ingredientName]
                     );
                     ingredient_id = insertIngredientResult.rows[0].ingredient_id;
                 }
 
                 await pool.query(
                     `INSERT INTO product_ingredients (product_id, ingredient_id)
-                     VALUES ($1, $2);`,
+             VALUES ($1, $2);`,
                     [product_id, ingredient_id]
                 );
             }
         }
+
 
         // Actualizar la información nutricional
         if (Object.keys(nutrition_info).length > 0) {

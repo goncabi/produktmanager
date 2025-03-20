@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product, Ingredient } from '../../interfaces/models';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCardModule} from '@angular/material/card';
+import Swal from 'sweetalert2';
+
 
 
 @Component({
@@ -14,7 +16,7 @@ import {MatCardModule} from '@angular/material/card';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatExpansionModule, MatCardModule] // Agregamos CommonModule y FormsModule
+  imports: [CommonModule, FormsModule, MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product = {
@@ -52,7 +54,8 @@ export class ProductDetailsComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router // ✅ Inyectamos Router para la navegación
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +91,41 @@ export class ProductDetailsComponent implements OnInit {
     } else {
       console.error("ID de producto no válido.");
     }
+  }
+  /** 📝 Bearbeiten */
+  editProduct(product: Product): void {
+    if (product?.product_id) {
+      console.log("🔄 Navigiere zur Bearbeitung des Produkts mit ID:", product.product_id);
+      this.router.navigate(['/edit-product', product.product_id]); // ✅ Navegar a la edición del producto
+    } else {
+      console.error("⚠️ Fehler: Das Produkt hat keine gültige ID:", product);
+    }
+  }
+  /** ❌ Löschen */
+  deleteProduct(product: Product): void {
+    Swal.fire({
+      title: 'Bist du sicher?',
+      text: `Möchtest du das Produkt "${product.name}" wirklich löschen?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ja, löschen!',
+      cancelButtonText: 'Abbrechen',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productService.deleteProduct(product.product_id).subscribe({
+          next: () => {
+            Swal.fire('✅ Gelöscht!', 'Das Produkt wurde erfolgreich gelöscht.', 'success');
+            this.router.navigate(['/products']); // ✅ Redirigir a la lista de productos
+          },
+          error: (err) => {
+            console.error("❌ Fehler beim Löschen des Produkts:", err);
+            Swal.fire('❌ Fehler', 'Das Produkt konnte nicht gelöscht werden.', 'error');
+          }
+        });
+      }
+    });
   }
 
   cancelEdit(): void {
