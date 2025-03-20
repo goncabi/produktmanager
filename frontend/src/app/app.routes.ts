@@ -5,6 +5,7 @@ import { ProductTableComponent } from './components/product-table/product-table.
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import {LandingComponent} from './components/landing/landing.component';
 import { EditProductComponent } from './components/edit-product/edit-product.component';
+import { CreateProductComponent } from './components/create-product/create-product.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/landing', pathMatch: 'full' },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'products', component: ProductTableComponent },
   { path: 'product/:id', component: ProductDetailsComponent },
   { path: 'edit-product/:id', component: EditProductComponent },
+  { path: 'create-product', component: CreateProductComponent },
   { path: '**', redirectTo: '' }, // Redirigir rutas no encontradas a la landing page
 ]
 
