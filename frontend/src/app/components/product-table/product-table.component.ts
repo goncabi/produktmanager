@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import {MatCell, MatHeaderCell, MatHeaderRow, MatRow, MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ProductService } from '../../services/product.service';
-import {Ingredient, Product} from '../../interfaces/models';
+import {Product} from '../../interfaces/models';
 import { Router } from '@angular/router';
+import {CommonModule} from '@angular/common';
 import {MatIcon} from '@angular/material/icon';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltip} from '@angular/material/tooltip';
-import Swal from 'sweetalert2';
+import {NgIf} from '@angular/common';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 
 
 @Component({
@@ -25,18 +29,18 @@ import Swal from 'sweetalert2';
     MatPaginator,
     MatToolbar,
     MatButtonModule,
-    MatTooltip
+    MatTooltip,
+    CommonModule,
+    NgIf, MatSnackBarModule
   ],
   styleUrls: ['./product-table.component.scss']
 })
 export class ProductTableComponent implements OnInit {
-  displayedColumns: string[] = [
-    'ean', 'category', 'name', 'weightVolume',
-    'manufacturer', 'actions'
-  ];
+  displayedColumns: string[] = ['image', 'ean', 'category', 'name', 'weightVolume', 'manufacturer', 'actions'];
+
   dataSource = new MatTableDataSource<Product>();
 
-  constructor(private productService: ProductService, private router: Router) {
+  constructor(private productService: ProductService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
   }
 
 
@@ -71,27 +75,34 @@ export class ProductTableComponent implements OnInit {
     }
   }
 
-
   deleteProduct(product: Product): void {
-    Swal.fire({
-      title: 'Bist du sicher?',
-      text: `Möchtest du das Produkt "${product.name}" wirklich löschen?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ja, löschen!',
-      cancelButtonText: 'Abbrechen',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px', // Cambia este valor para ajustar el tamaño
+      height: 'auto', // Deja auto o ajusta a un tamaño fijo si prefieres
+      data: {
+        title: 'Bist du sicher?',
+        message: `Möchtest du das Produkt "${product.name}" wirklich löschen?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result === true) { // El usuario confirmó
         this.productService.deleteProduct(product.product_id).subscribe({
           next: () => {
-            Swal.fire('Gelöscht!', 'Das Produkt wurde erfolgreich gelöscht.', 'success');
-            this.loadProducts(); // Recargar la tabla después de eliminar
+            this.snackBar.open('✅ Produkt erfolgreich gelöscht!', 'Schließen', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
+            this.router.navigate(['/products']);
           },
           error: (err) => {
-            console.error("Fehler beim Löschen des Produkts:", err);
-            Swal.fire('Fehler', 'Das Produkt konnte nicht gelöscht werden.', 'error');
+            console.error("❌ Fehler beim Löschen des Produkts:", err);
+            this.snackBar.open('❌ Fehler: Das Produkt konnte nicht gelöscht werden.', 'Schließen', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
           }
         });
       }

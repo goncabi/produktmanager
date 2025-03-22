@@ -4,7 +4,7 @@
 
   /* Spezifische Farben für Überschriften */
   h1, h2, h3 {
-    color: #ff9800 !important; /* Orange für Überschriften */
+    color: #EF6C00 !important; /* Orange für Überschriften */
   }
 
   /* Paragraphen */
@@ -17,15 +17,10 @@
     color: white !important;
   }
 
-  /* Hero-Text */
-  .hero-content h1 {
-    color: #ff9800 !important; /* Gelb für die Hauptüberschrift */
-  }
-
 
   /* Links im Footer */
   footer a {
-    color: #ff9800 !important;
+    color: #F57C00 !important;
     text-decoration: none;
   }
   footer a:hover {
@@ -40,15 +35,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
     padding: 4rem 2rem;
+    gap: 2rem;
     .hero-content {
       max-width: 500px;
       text-align: left;
     }
 
     .hero-image {
-      width: 250px;
-      margin-left: 2rem;
+      width: 360px;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
   }
 
@@ -60,6 +63,7 @@
       display: flex;
       justify-content: center;
       gap: 2rem;
+      flex-wrap: wrap;
 
       mat-card {
         padding: 1rem;

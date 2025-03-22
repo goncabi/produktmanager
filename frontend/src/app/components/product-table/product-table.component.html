@@ -1,9 +1,17 @@
-<div class="mat-elevation-z2">
+<div class="mat-elevation-z2" table-container>
   <mat-toolbar>
     <span>📦 Produktliste</span>
   </mat-toolbar>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Imagen Column -->
+  <ng-container matColumnDef="image">
+    <mat-header-cell *matHeaderCellDef> Bild </mat-header-cell>
+    <mat-cell *matCellDef="let product">
+      <img *ngIf="product.image_url" [src]="product.image_url" alt="{{product.name}}" width="100" height="100">
+    </mat-cell>
+  </ng-container>
+
   <!-- EAN Column -->
   <ng-container matColumnDef="ean">
     <mat-header-cell *matHeaderCellDef> EAN/GTIN </mat-header-cell>
@@ -13,7 +21,7 @@
   <!-- Category Column -->
   <ng-container matColumnDef="category">
     <mat-header-cell *matHeaderCellDef> Kategorie </mat-header-cell>
-    <mat-cell *matCellDef="let product"> {{ product.category.name }} </mat-cell>
+    <mat-cell *matCellDef="let product"> {{ product.category_name }} </mat-cell>
   </ng-container>
 
   <!-- Product Name Column -->

@@ -1,42 +1,20 @@
 @use '@angular/material' as mat;
 
+
 html, body {
   height: 100%;
 }
   html {
     color-scheme: light dark;
     @include mat.theme((
-      color: mat.$orange-palette,
+      color: (
+        primary: mat.$orange-palette,
+        theme-type: light,
+      ),
       typography: Roboto,
       density: 0
     ));
   }
-
-
-/* Cambiar colores globales */
-body {
-  background-color: var(--mat-sys-surface); /* Fondo base */
-  color: var(--mat-sys-on-surface); /* Color de texto */
-}
-
-/* Botones primarios */
-.mat-button, .mat-raised-button {
-  background-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
-}
-
-/* Estilos para mat-toolbar */
-.mat-toolbar {
-  background-color: var(--mat-sys-primary);
-  color: var(--mat-sys-on-primary);
-}
-
-/* Tarjetas (mat-card) */
-mat-card {
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  box-shadow: var(--mat-sys-level3); /* Elevación */
-}
 
 
 /* Establecer variables globales del theme */

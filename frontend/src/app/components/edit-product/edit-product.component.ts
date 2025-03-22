@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
-import { Product } from '../../interfaces/models';
+import { Product, Category } from '../../interfaces/models';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ReactiveFormsModule } from '@angular/forms';
+import {MatOption} from '@angular/material/core';
+import {MatSelect} from '@angular/material/select';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-edit-product',
@@ -24,21 +28,33 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatGridListModule,
     ReactiveFormsModule,
+    MatOption,
+    MatSelect,
+    MatSnackBarModule
   ],
 })
 export class EditProductComponent implements OnInit {
   editProductForm!: FormGroup;
   productId!: number;
+  categories: Category[] = [];  // 🔥 Aquí se guardan las categorías recibidas
+  isSubmitting: boolean = false;
+
+
 
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.productId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadCategories(); // 🔥 Cargar las categorías desde el backend
+
+
+
 
     // Inicializar Formulario
     this.editProductForm = this.fb.group({
@@ -54,9 +70,7 @@ export class EditProductComponent implements OnInit {
       caffeine_mg: [null],
       deposit_amount: [null],
       ingredients: [''], // Se guardará como string separada por comas
-      category: this.fb.group({
-        name: ['', Validators.required]
-      }),
+      category_id: [null, Validators.required],  // 🔥 category_id en lugar de category
       manufacturer: this.fb.group({
         name: ['', Validators.required],
         address: [''],
@@ -82,7 +96,7 @@ export class EditProductComponent implements OnInit {
           this.editProductForm.patchValue({
             ...product,
             name: this.capitalizeWords(product.name),
-            category: { name: this.capitalizeWords(product.category.name) },
+            category_id: product.category_id,  // 🔥 Asignar el category_id
             manufacturer: {
               name: this.capitalizeWords(product.manufacturer.name),
               address: product.manufacturer.address, // ✅ Ahora sí se establece la dirección
@@ -106,6 +120,16 @@ export class EditProductComponent implements OnInit {
       });
     }
   }
+  loadCategories(): void {
+    this.productService.getCategories().subscribe({
+      next: (categories: Category[]) => {
+        this.categories = categories;
+        console.log("📦 Categorías cargadas:", this.categories);
+      },
+      error: (error) => console.error("Fehler beim Laden der Kategorien:", error)
+    });
+  }
+
 
   submitForm(): void {
     if (this.editProductForm.valid) {
@@ -116,8 +140,26 @@ export class EditProductComponent implements OnInit {
 
       console.log("✅ Datos corregidos antes de enviar:", JSON.stringify(updatedProduct, null, 2));
 
-      this.productService.updateProduct(this.productId, updatedProduct).subscribe(() => {
-        this.router.navigate(['/products']);
+      this.productService.updateProduct(this.productId, updatedProduct).subscribe({
+        next: () => {
+          this.snackBar.open('Produkt erfolgreich geän!', 'Schließen', { // ✅ Usar MatSnackBar
+            duration: 3000,
+            panelClass: ['mat-toolbar', 'mat-primary']
+
+          });
+          this.router.navigate(['/products']);
+          this.isSubmitting = false;
+        },
+        error: (error) => {
+          console.error('Fehler beim Erstellen des Produkts:', error);
+          this.snackBar.open('Fehler beim Ändern des Produkts', 'Schließen', { // ✅ Usar MatSnackBar
+            duration: 3000,
+            panelClass: ['mat-toolbar', 'mat-warn'],
+            horizontalPosition: 'center',  // 🔥 Alineación horizontal ('start', 'center', 'end', 'left', 'right')
+            verticalPosition: 'top'        // 🔥 Alineación vertical ('top', 'bottom')
+          });
+          this.isSubmitting = false;
+        }
       });
     }
   }

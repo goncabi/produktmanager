@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
-import { Product, Ingredient } from '../../interfaces/models';
+import { Product, Category} from '../../interfaces/models';
 import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCardModule} from '@angular/material/card';
-import Swal from 'sweetalert2';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
+
 
 
 
@@ -16,7 +19,7 @@ import Swal from 'sweetalert2';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
+  imports: [CommonModule, MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product = {
@@ -45,21 +48,27 @@ export class ProductDetailsComponent implements OnInit {
       fiber_g: 0,
       sodium_mg: 0
     }, // ✅ Se inicializa con valores predeterminados
-    category: { category_id: 0, name: 'Keine' },
+    category_id: 0, // 🔥 Ahora solo tiene el ID de la categoría
+    category_name: '',
     manufacturer: { manufacturer_id: 0, name: 'Keine', address: 'Keine', country: 'Keine' }
   };
   ingredientNames: string = '';
+  categories: Category[] = [];
   editMode = false;
 
 
   constructor(
     private productService: ProductService,
     private route: ActivatedRoute,
-    private router: Router // ✅ Inyectamos Router para la navegación
+    private router: Router, // ✅ Inyectamos Router para la navegación
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.loadProduct();
+    this.loadCategories();
+
   }
 
   loadProduct(): void {
@@ -74,7 +83,6 @@ export class ProductDetailsComponent implements OnInit {
             return;
           }
           product.manufacturer = product.manufacturer || { id: 0, name: '', address: '', country: '' };
-          product.category = product.category || { id: 0, name: '' };
 
           this.product = product;
 
@@ -92,6 +100,12 @@ export class ProductDetailsComponent implements OnInit {
       console.error("ID de producto no válido.");
     }
   }
+
+  loadCategories(): void {
+    this.productService.getCategories().subscribe(categories => {
+      this.categories = categories;
+    });
+  }
   /** 📝 Bearbeiten */
   editProduct(product: Product): void {
     if (product?.product_id) {
@@ -101,27 +115,35 @@ export class ProductDetailsComponent implements OnInit {
       console.error("⚠️ Fehler: Das Produkt hat keine gültige ID:", product);
     }
   }
-  /** ❌ Löschen */
+
   deleteProduct(product: Product): void {
-    Swal.fire({
-      title: 'Bist du sicher?',
-      text: `Möchtest du das Produkt "${product.name}" wirklich löschen?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ja, löschen!',
-      cancelButtonText: 'Abbrechen',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px', // Cambia este valor para ajustar el tamaño
+      height: 'auto', // Deja auto o ajusta a un tamaño fijo si prefieres
+      data: {
+        title: 'Bist du sicher?',
+        message: `Möchtest du das Produkt "${product.name}" wirklich löschen?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result === true) { // El usuario confirmó
         this.productService.deleteProduct(product.product_id).subscribe({
           next: () => {
-            Swal.fire('✅ Gelöscht!', 'Das Produkt wurde erfolgreich gelöscht.', 'success');
-            this.router.navigate(['/products']); // ✅ Redirigir a la lista de productos
+            this.snackBar.open('✅ Produkt erfolgreich gelöscht!', 'Schließen', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
+            this.router.navigate(['/products']);
           },
           error: (err) => {
             console.error("❌ Fehler beim Löschen des Produkts:", err);
-            Swal.fire('❌ Fehler', 'Das Produkt konnte nicht gelöscht werden.', 'error');
+            this.snackBar.open('❌ Fehler: Das Produkt konnte nicht gelöscht werden.', 'Schließen', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
           }
         });
       }
@@ -132,4 +154,5 @@ export class ProductDetailsComponent implements OnInit {
     this.editMode = false;
     this.loadProduct();
   }
+
 }

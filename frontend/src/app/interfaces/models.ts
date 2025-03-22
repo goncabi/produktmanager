@@ -42,6 +42,7 @@ export interface Product {
   deposit_amount?: number;
   ingredients: Ingredient[]; // 🛠️ Cambiado a array de strings
   nutritionInfo?: NutritionInfo;
-  category: Category;
+  category_id: number;  // 🔥 Cambiado de `category` a `category_id` (número entero)
+  category_name: string;
   manufacturer: Manufacturer;
 }
