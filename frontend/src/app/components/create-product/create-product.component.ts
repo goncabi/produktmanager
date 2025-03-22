@@ -3,12 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
+import { Product, Category } from '../../interfaces/models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
+import {MatSnackBar} from '@angular/material/snack-bar';
+
+
 
 @Component({
   selector: 'app-create-product',
@@ -23,20 +28,26 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatGridListModule,
     ReactiveFormsModule,
+    MatSelectModule
   ],
 })export class CreateProductComponent implements OnInit {
   addProductForm!: FormGroup; // ✅ Cambio de nombre aquí
+  categories: Category[] = [];  // 🟢 Aquí se guardan las categorías recibidas
+  isSubmitting: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.addProductForm = this.fb.group({ // ✅ Cambio de nombre aquí
       ean_gtin: ['', Validators.required],
       name: ['', Validators.required],
+      category_id: [null, Validators.required], // 🔥 Asegúrate de que existe
       image_url: [''],
       price_delivery: [0],
       price_pickup: [0],
@@ -47,9 +58,7 @@ import { ReactiveFormsModule } from '@angular/forms';
       caffeine_mg: [null],
       deposit_amount: [null],
       ingredients: [''],
-      category: this.fb.group({
-        name: ['', Validators.required]
-      }),
+
       manufacturer: this.fb.group({
         name: ['', Validators.required],
         address: [''],
@@ -64,22 +73,49 @@ import { ReactiveFormsModule } from '@angular/forms';
         sugar_g: [null],
         fiber_g: [null],
         sodium_mg: [null]
-      }),
+      })
     });
+    this.loadCategories();  // 🔥 Cargar categorías al iniciar el componente
   }
 
+loadCategories(): void {
+  this.productService.getCategories().subscribe(categories => {
+    this.categories = categories;
+  });
+}
+
+
   submitForm(): void {
-    if (this.addProductForm.valid) { // ✅ Cambio de nombre aquí
+    if (this.addProductForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;  // 🔥 Empieza a enviar, bloquear otros clics
       const newProduct = {
-        ...this.addProductForm.value, // ✅ Cambio de nombre aquí
+        ...this.addProductForm.value,
         ingredients: this.convertIngredientsToArray(this.addProductForm.value.ingredients)
       };
 
       console.log("✅ Produktdaten vor dem Senden:", JSON.stringify(newProduct, null, 2));
 
-      this.productService.addProduct(newProduct).subscribe(() => {
-        this.router.navigate(['/products']);
-      });
+      this.productService.addProduct(newProduct).subscribe({
+          next: () => {
+            this.snackBar.open('Produkt erfolgreich erstellt!', 'Schließen', { // ✅ Usar MatSnackBar
+              duration: 3000,
+              panelClass: ['mat-toolbar', 'mat-primary']
+
+            });
+            this.router.navigate(['/products']);
+            this.isSubmitting = false;
+          },
+            error: (error) => {
+            console.error('Fehler beim Erstellen des Produkts:', error);
+            this.snackBar.open('Fehler beim Erstellen des Produkts', 'Schließen', { // ✅ Usar MatSnackBar
+              duration: 3000,
+              panelClass: ['mat-toolbar', 'mat-warn'],
+              horizontalPosition: 'center',  // 🔥 Alineación horizontal ('start', 'center', 'end', 'left', 'right')
+              verticalPosition: 'top'        // 🔥 Alineación vertical ('top', 'bottom')
+            });
+            this.isSubmitting = false;
+          }
+        });
     }
   }
 

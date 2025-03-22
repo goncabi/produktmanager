@@ -88,10 +88,8 @@ router.get("/", async (req, res) => {
                 // 🔹 Convertir la cadena de ingredientes en un array
                 ingredients: product.ingredient_names ? product.ingredient_names.split(', ').map(name => ({ name })) : [],
                 nutritionInfo,
-                category: {
-                    category_id: product.category_id,
-                    name: product.category_name
-                },
+                category_id: product.category_id,
+                category_name: product.category_name,
                 manufacturer: {
                     manufacturer_id: product.manufacturer_id,
                     name: product.manufacturer_name,
@@ -105,6 +103,16 @@ router.get("/", async (req, res) => {
     } catch (error) {
         console.error("Fehler beim Abrufen der Produkte:", error);
         res.status(500).json({ error: "Interner Serverfehler." });
+    }
+});
+
+router.get('/categories', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT category_id, name FROM categories');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Fehler beim Abrufen der Kategorien:', error);
+        res.status(500).json({ error: 'Fehler beim Abrufen der Kategorien' });
     }
 });
 
@@ -194,10 +202,8 @@ router.get("/:id", async (req, res) => {
             deposit_amount: product.deposit_amount,
             ingredients,
             nutritionInfo,
-            category: {
-                category_id: product.category_id,
-                name: product.category_name
-            },
+            category_id: product.category_id,
+            category_name: product.category_name,
             manufacturer: {
                 manufacturer_id: product.manufacturer_id,
                 name: product.manufacturer_name,
@@ -212,11 +218,9 @@ router.get("/:id", async (req, res) => {
 });
 // Crear un nuevo producto
 router.post("/", async (req, res) => {
+    console.log("🌟 Request body recibido:", req.body);  // 🔍 Verificar `category_id`
     const {
-        category_name, // Nombre de la categoría elegido por el usuario
-        manufacturer_name,
-        manufacturer_address,
-        manufacturer_country,
+        category_id, // Nombre de la categoría elegido por el usuario
         ean_gtin,
         sku_plu,
         name,
@@ -231,7 +235,8 @@ router.post("/", async (req, res) => {
         caffeine_mg = 0,
         deposit_amount = 0,
         ingredients = [],
-        nutrition_info = {}  // Cambié aquí a nutrition_info
+        nutrition_info = {},  // Cambié aquí a nutrition_info
+        manufacturer = {} //Objeto Manufacturer
     } = req.body;
 
     if (!ean_gtin || !name) {
@@ -239,10 +244,9 @@ router.post("/", async (req, res) => {
     }
 
     try {
-        let category_id = null;
         let manufacturer_id = null;
 
-        // Verificar si el `ean_gtin` ya existe
+        // 🔍 Verificar si el EAN ya existe
         const existingProduct = await pool.query(
             `SELECT product_id FROM products WHERE ean_gtin = $1;`, [ean_gtin]
         );
@@ -250,25 +254,16 @@ router.post("/", async (req, res) => {
             return res.status(400).json({ error: "Produkt mit diesem EAN/GTIN existiert bereits." });
         }
 
-        // Obtener el `category_id` desde la base de datos usando el nombre de la categoría
-        const categoryResult = await pool.query(
-            `SELECT category_id FROM categories WHERE name = $1;`, [category_name]
-        );
-
-        if (categoryResult.rowCount === 0) {
-            return res.status(400).json({ error: "Kategorie existiert nicht." });
+        // 📌 Insertar o actualizar el fabricante
+        if (manufacturer.name) {
+            const manufacturerResult = await pool.query(
+                `INSERT INTO manufacturers (name, address, country)
+                 VALUES ($1, $2, $3)
+                 RETURNING manufacturer_id;`,
+                [manufacturer.name, manufacturer.address || '', manufacturer.country || '']
+            );
+            manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
         }
-
-        category_id = categoryResult.rows[0].category_id;
-
-        // Insertar el fabricante
-        const manufacturerResult = await pool.query(
-            `INSERT INTO manufacturers (name, address, country)
-             VALUES ($1, $2, $3)
-             RETURNING manufacturer_id;`,
-            [manufacturer_name, manufacturer_address, manufacturer_country]
-        );
-        manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
 
         // Insertar el producto con el `category_id` obtenido
         const productResult = await pool.query(
@@ -286,11 +281,14 @@ router.post("/", async (req, res) => {
 
         const product_id = productResult.rows[0].product_id;
 
-        // Insertar los ingredientes (si es necesario)
+
+        // 📌 Insertar ingredientes
         if (ingredients.length > 0) {
             for (const ingredient of ingredients) {
+                const ingredientName = ingredient.name;
+
                 const ingredientResult = await pool.query(
-                    `SELECT ingredient_id FROM ingredients WHERE name = $1;`, [ingredient]
+                    `SELECT ingredient_id FROM ingredients WHERE name = $1;`, [ingredientName]
                 );
 
                 let ingredient_id;
@@ -298,18 +296,31 @@ router.post("/", async (req, res) => {
                     ingredient_id = ingredientResult.rows[0].ingredient_id;
                 } else {
                     const insertIngredientResult = await pool.query(
-                        `INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id;`, [ingredient]
+                        `INSERT INTO ingredients (name) VALUES ($1) RETURNING ingredient_id;`, [ingredientName]
                     );
                     ingredient_id = insertIngredientResult.rows[0].ingredient_id;
                 }
 
-                await pool.query(
-                    `INSERT INTO product_ingredients (product_id, ingredient_id)
-                     VALUES ($1, $2);`,
-                    [product_id, ingredient_id]
-                );
+
+                try {
+                    // 🔥 Insertar relación entre producto e ingrediente
+                    await pool.query(
+                        `INSERT INTO product_ingredients (product_id, ingredient_id)
+                 VALUES ($1, $2);`,
+                        [product_id, ingredient_id]
+                    );
+                } catch (error) {
+                    // Si ya existe la relación, simplemente ignoramos el error
+                    if (error.code === '23505') { // Código de error para conflicto de clave duplicada
+                        console.log(`⚠️ La relación entre el producto y el ingrediente '${ingredientName}' ya existe.`);
+                    } else {
+                        console.error("❌ Fehler beim Einfügen des Ingredients:", error);
+                        return res.status(500).json({ error: "Interner Serverfehler beim Einfügen des Ingredients." });
+                    }
+                }
             }
         }
+
 
         // Insertar información nutricional
         if (Object.keys(nutrition_info).length > 0) {
@@ -338,8 +349,9 @@ router.post("/", async (req, res) => {
 
 // 📌 Actualizar un producto
 router.put("/:id", async (req, res) => {
+    console.log("Contenido de req.body recibido en el servidor:", req.body);  // 🔍 Verificar si llegan category_id, manufacturer y ingredients
     const {
-        category_name,
+        category_id,
         manufacturer_name,
         manufacturer_address,
         manufacturer_country,
@@ -364,8 +376,12 @@ router.put("/:id", async (req, res) => {
         return res.status(400).json({ error: "Sowohl 'name' als auch 'ean_gtin' sind erforderlich." });
     }
 
+    if (!category_id) {
+        return res.status(400).json({ error: "Kategorie-ID ist erforderlich." });
+    }
+
+
     try {
-        let category_id = null;
         let manufacturer_id = null;
 
         // Verificar si el producto existe
@@ -376,25 +392,19 @@ router.put("/:id", async (req, res) => {
             return res.status(400).json({ error: "Produkt nicht gefunden." });
         }
 
-        // Actualizar la categoría si se pasa un nuevo nombre
-        if (category_name) {
-            const categoryResult = await pool.query(
-                `INSERT INTO categories (name)
-                 VALUES ($1)
-                 RETURNING category_id;`, [category_name]
-            );
-            category_id = categoryResult.rows[0].category_id;
-        }
-
         // Actualizar el fabricante si se pasa un nuevo nombre o dirección
-        if (manufacturer_name) {
-            const manufacturerResult = await pool.query(
-                `INSERT INTO manufacturers (name, address, country)
-                 VALUES ($1, $2, $3)
-                 RETURNING manufacturer_id;`,
-                [manufacturer_name, manufacturer_address, manufacturer_country]
-            );
-            manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
+        if (req.body.manufacturer) {  // ✅ Comprueba si existe un objeto `manufacturer`
+            const { name: manufacturer_name, address: manufacturer_address, country: manufacturer_country } = req.body.manufacturer;
+
+            if (manufacturer_name) { // ✅ Asegúrate que hay un nombre antes de intentar insertar
+                const manufacturerResult = await pool.query(
+                    `INSERT INTO manufacturers (name, address, country)
+             VALUES ($1, $2, $3)
+             RETURNING manufacturer_id;`,
+                    [manufacturer_name, manufacturer_address, manufacturer_country]
+                );
+                manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
+            }
         }
 
         // Actualizar el producto
@@ -544,6 +554,7 @@ router.delete("/", async (req, res) => {
         res.status(500).json({ error: "Interner Serverfehler" });
     }
 });
+// 📁 routes/categories.js (O donde tengas tus rutas)
 
 
 module.exports = router;

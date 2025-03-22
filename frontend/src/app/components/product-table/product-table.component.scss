@@ -1,56 +1,32 @@
-.product-details-container {
-  padding: 20px;
-  max-width: 500px;
-  margin: auto;
+/* Tabla responsive */
+.table-container {
+  overflow-x: scroll; /* Permitir desplazamiento horizontal si es necesario */
 }
-
-/* Asegura que el contenido se ajuste al ancho completo */
-.full-width {
-  width: 100%;
-}
-
-/* Botones alineados con espacio entre ellos */
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap; /* Permite que los botones se acomoden en pantallas pequeñas */
-  gap: 10px; /* Espacio entre los botones */
-  margin-top: 20px;
-}
-
-/* Espaciado entre botones en la versión normal */
 .action-buttons button {
-  margin-right: 8px; /* Espacio entre botones */
+  margin: 5px 0; /* Añade un pequeño margen arriba y abajo */
+  margin-right: 8px
 }
 
-/* 🌟 Responsive Anpassungen */
+/* Ajustar columnas en pantallas pequeñas */
 @media (max-width: 768px) {
-  .product-details-container {
-    max-width: 90%; /* Asegura que no se vea demasiado estrecho en pantallas pequeñas */
+  table {
+    width: 90%;
+    display: block;
+  }
+
+  mat-header-cell, mat-cell {
+    display: block;
+    width: 90%;
+    box-sizing: border-box;
+  }
+
+  .mat-header-cell, .mat-cell {
     padding: 10px;
   }
-
-  .button-group {
-    flex-direction: column;
-    align-items: center; /* Centra los botones en pantallas pequeñas */
-  }
-
-  .action-buttons button {
-    width: 100%; /* Los botones ocupan todo el ancho en pantallas pequeñas */
-    margin: 5px 0; /* Añade un pequeño margen arriba y abajo */
-  }
-}
-
-@media (max-width: 480px) {
-  .product-details-container {
-    padding: 5px;
-  }
-
-  .button-group {
+  .action-buttons{
+    display: flex;
     flex-direction: column;
   }
 
-  .action-buttons button {
-    width: 100%; /* Botones en bloque para mejor accesibilidad */
-  }
+
 }

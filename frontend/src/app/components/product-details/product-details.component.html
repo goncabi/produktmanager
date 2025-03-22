@@ -17,7 +17,7 @@
 
       <div class="info-section">
         <p><strong>EAN:</strong> {{ product.ean_gtin || 'Keine' }}</p>
-        <p><strong>Kategorie:</strong> {{ product.category.name || 'Keine' }}</p>
+        <p><strong>Kategorie:</strong> {{ product.category_name || 'Keine' }}</p>
         <p><strong>Produktname:</strong> {{ product.name || 'Keine' }}</p>
         <p><strong>Alkoholgehalt:</strong> {{ product.alcohol_volume + '%' || 'Keine' }}</p>
       </div>
@@ -79,6 +79,9 @@
       </button>
       <button mat-raised-button color="warn" (click)="deleteProduct(product); $event.stopPropagation()">
         ❌ Löschen
+      </button>
+      <button mat-raised-button color="warn" type="button" (click)="cancelEdit()">
+        ❌ Abbrechen
       </button>
     </div>
   </mat-card>
