@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {MatCell, MatHeaderCell, MatHeaderRow, MatRow, MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ProductService } from '../../services/product.service';
 import {Product} from '../../interfaces/models';
@@ -34,6 +34,7 @@ import {MatInputModule} from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule
 ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./product-table.component.scss']
 })
 export class ProductTableComponent implements OnInit {

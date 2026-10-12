@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions} from '@angular/material/dialog';
 import {MatButton} from '@angular/material/button';
 
@@ -19,6 +19,7 @@ import {MatButton} from '@angular/material/button';
     MatDialogActions,
     MatButton
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .dialog-content {
       padding: 10px;

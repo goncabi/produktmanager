@@ -8,7 +8,7 @@
       <div class="image-section">
         @if (editProductForm.get('image_url')?.value) {
           <img
-            [src]="editProductForm.get('image_url')?.value"
+            [src]="$safeNavigationMigration(editProductForm.get('image_url')?.value)"
             alt="Produktbild" class="product-image">
         }
         @if (!editProductForm.get('image_url')?.value) {
