@@ -1,0 +1,39 @@
+
+.table-container {
+  overflow-x: scroll;
+}
+.action-buttons button {
+  margin: 5px 0;
+  margin-right: 8px
+}
+
+@media (max-width: 768px) {
+  table {
+    width: 100%;
+    display: block;
+    padding: 10px;
+    hyphens: auto;
+
+  }
+
+  mat-header-cell, mat-cell {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: normal;
+    word-break: auto-phrase;
+    overflow-wrap: inherit;
+    hyphens: auto;
+    padding: 10px;
+  }
+
+  .mat-header-cell, .mat-cell {
+    padding: 10px;
+  }
+  .action-buttons{
+    display: flex;
+    flex-direction: column;
+  }
+
+
+}
