@@ -1,102 +1,254 @@
 @use '@angular/material' as mat;
 
+// ---------------------------------------------------------------------------
+// Design-Tokens (Redesign "Piedra cálida")
+// ---------------------------------------------------------------------------
+// Das Orange der Marke bleibt nur im Logo. Die Akzentfarbe für Buttons ist ein
+// dunkleres Orange, damit weißer Text darauf ≥4,5:1 Kontrast hat.
+:root {
+  --pb-ground: #F7F4F0;        // Seitenhintergrund
+  --pb-card: #FFFFFF;          // Karten, Tabelle, Eingabefelder
+  --pb-header: #2B2622;        // Kopfzeile, Streifen "Über ProdBase"
+  --pb-header-text: #F3EDE6;
+  --pb-text: #26211D;
+  --pb-text-soft: #5A4E44;     // sekundäre Absätze
+  --pb-muted: #6B6158;         // Beschriftungen, EAN, Hilfetexte
+  --pb-border: #E7E0D8;        // Karten, starke Trennlinien
+  --pb-border-soft: #F0EBE5;   // Trennlinien zwischen Zeilen
+  --pb-control: #9A8F85;       // Rahmen von Eingaben und sekundären Buttons (≥3:1)
+  --pb-placeholder: #8A7F75;
+  --pb-accent: #C2500A;        // primärer Button
+  --pb-brand: #E8610A;         // nur das Logo-Icon
+  --pb-logo-bg: #FFE9DF;
+  --pb-chip: #F3ECE4;          // Kategorie-Chips, Miniaturen, Icon-Hover
+  --pb-chip-text: #5A4E44;
+  --pb-initial: #B84F00;
+  --pb-danger: #A32A22;
+  --pb-danger-border: #E7D3D0;
+  --pb-danger-hover: #FBF1F0;
+  --pb-row-hover: #FBF9F6;
 
-html, body {
-  height: 100%;
+  --pb-radius-card: 14px;
+  --pb-radius-control: 10px;
+  --pb-radius-thumb: 8px;
 }
-  html {
-    color-scheme: light dark;
-    @include mat.theme((
-      color: (
-        primary: mat.$orange-palette,
-        theme-type: light,
-      ),
-      typography: Roboto,
-      density: 0
-    ));
+
+// Angular Material bleibt für Dialoge, Snackbars und Tooltips: deren System-
+// Tokens auf die Palette abbilden, damit sie zum Rest passen.
+html {
+  color-scheme: light;
+  @include mat.theme((
+    color: (primary: mat.$orange-palette, theme-type: light),
+    typography: Roboto,
+    density: 0,
+  ));
+  --mat-sys-primary: var(--pb-accent);
+  --mat-sys-on-primary: #FFFFFF;
+  --mat-sys-surface: var(--pb-card);
+  --mat-sys-on-surface: var(--pb-text);
+  --mat-sys-outline: var(--pb-control);
+}
+
+// ---------------------------------------------------------------------------
+// Grundlagen
+// ---------------------------------------------------------------------------
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--pb-ground);
+  color: var(--pb-text);
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+
+// Sichtbarer Fokus auf allen Bedienelementen.
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--pb-accent);
+  outline-offset: 2px;
+}
+
+.pb-num { font-variant-numeric: tabular-nums; }
+
+.pb-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) { padding: 24px 16px; }
+}
+
+.pb-container--narrow { max-width: 920px; }
+
+.pb-page-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+
+// Kleine Überschrift über Tabellen und Datenblöcken.
+.pb-eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pb-muted);
+}
+
+.pb-card {
+  background: var(--pb-card);
+  border: 1px solid var(--pb-border);
+  border-radius: var(--pb-radius-card);
+}
+
+.pb-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--pb-chip);
+  color: var(--pb-chip-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+// ---------------------------------------------------------------------------
+// Buttons (Mindestgröße 44×44 px)
+// ---------------------------------------------------------------------------
+.pb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: var(--pb-radius-control);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.pb-btn--primary {
+  background: var(--pb-accent);
+  color: #FFFFFF;
+
+  &:hover:not(:disabled) { background: #A94507; }
+}
+
+.pb-btn--secondary {
+  background: var(--pb-card);
+  border-color: var(--pb-control);
+  color: var(--pb-text);
+
+  &:hover:not(:disabled) { background: var(--pb-chip); }
+}
+
+.pb-btn--danger {
+  background: var(--pb-card);
+  border-color: var(--pb-danger-border);
+  color: var(--pb-danger);
+
+  &:hover:not(:disabled) { background: var(--pb-danger-hover); }
+}
+
+// Nur-Icon-Button (braucht aria-label).
+.pb-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pb-radius-control);
+  background: transparent;
+  color: var(--pb-muted);
+  cursor: pointer;
+
+  &:hover { background: var(--pb-chip); color: var(--pb-text); }
+}
+
+// ---------------------------------------------------------------------------
+// Breadcrumb (ersetzt den Zurück-Pfeil)
+// ---------------------------------------------------------------------------
+.pb-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--pb-muted);
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--pb-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &:hover { color: var(--pb-text); }
   }
 
-
-/* Establecer variables globales del theme */
-:root {
-  --primary-color: var(--mat-sys-primary); /* Color primario del theme */
-  --on-primary: var(--mat-sys-on-primary); /* Texto sobre color primario */
-
-  --background: var(--mat-sys-surface); /* Fondo general */
-  --text-color: var(--mat-sys-on-surface); /* Color del texto principal */
-
-  --header-bg: var(--mat-sys-surface-container); /* Color de fondo del header */
-  --header-text: var(--mat-sys-on-surface); /* Texto del header */
-
-  --card-bg: var(--mat-sys-surface-container-high); /* Fondo de las tarjetas */
-  --card-text: var(--mat-sys-on-surface); /* Texto en tarjetas */
-
-  --button-bg: var(--mat-sys-primary); /* Fondo de botones */
-  --button-text: var(--mat-sys-on-primary); /* Texto de botones */
-
-  --outline-color: var(--mat-sys-outline); /* Color de bordes y separadores */
+  [aria-current="page"] { color: var(--pb-text); }
 }
 
-/* Aplicar colores en todo el body */
-body {
-  background-color: var(--background);
-  color: var(--text-color);
-  font-family: var(--mat-sys-body-medium-font);
-  font-size: var(--mat-sys-body-medium-size);
-  font-weight: var(--mat-sys-body-medium-weight);
-  margin: 0;
+// ---------------------------------------------------------------------------
+// Produktbild: ganz zeigen, nicht verzerren (object-fit: contain auf Weiß)
+// ---------------------------------------------------------------------------
+.pb-thumb {
+  flex: none;
+  box-sizing: border-box;
+  border: 1px solid var(--pb-border-soft);
+  border-radius: var(--pb-radius-thumb);
+  background: #FFFFFF;
+  object-fit: contain;
 }
 
-/* Header */
-mat-toolbar {
-  background-color: var(--header-bg);
-  color: var(--header-text);
-  font-size: var(--mat-sys-title-medium-size);
-  font-weight: var(--mat-sys-title-medium-weight);
+// Platzhalter mit Initiale, wenn ein Produkt kein Bild hat oder es nicht lädt.
+.pb-thumb--initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--pb-chip);
+  color: var(--pb-initial);
+  font-weight: 700;
 }
 
-/* Botones */
-mat-button, mat-raised-button {
-  background-color: var(--button-bg);
-  color: var(--button-text);
-}
-
-/* Tarjetas */
+// ---------------------------------------------------------------------------
+// ALT: Regeln für die noch nicht umgestalteten Material-Bildschirme.
+// Werden entfernt, sobald alle Bildschirme umgestellt sind.
+// ---------------------------------------------------------------------------
 mat-card {
-  background-color: var(--card-bg);
-  color: var(--card-text);
-  box-shadow: var(--mat-sys-level2);
-  border-radius: var(--mat-sys-corner-medium);
+  background-color: var(--pb-card);
+  color: var(--pb-text);
+  border-radius: var(--pb-radius-card);
 }
 
-/* Formularios */
-mat-form-field {
-  width: 100%;
-}
-
-/* Tablas */
-mat-table {
-  background-color: var(--card-bg);
-  border-radius: var(--mat-sys-corner-medium);
-}
-
-mat-header-cell, mat-cell {
-  padding: 12px;
-  color: var(--text-color);
-}
-
-/* Links */
-a {
-  text-decoration: none;
-  color: var(--primary-color);
-}
-
-a:hover {
-  color: var(--on-primary);
-}
+mat-form-field { width: 100%; }
 
 @media (max-width: 768px) {
-  .details-grid {
-    grid-template-columns: 1fr; /* Poner todo en una sola columna en móviles */
-  }
+  .details-grid { grid-template-columns: 1fr; }
 }

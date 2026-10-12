@@ -1,5 +1,32 @@
 <header class="app-header">
-  <div class="logo-container">
-    <img src="assets/images/logo-header.png" alt="ProdBase Logo" class="logo">
+  <div class="app-header__inner">
+    <a class="brand" routerLink="/landing">
+      <span class="brand__logo">
+        <app-icon name="database" [size]="22" />
+      </span>
+      <span class="brand__name">ProdBase</span>
+    </a>
+
+    <nav aria-label="Hauptnavigation" class="main-nav">
+      <a
+        class="main-nav__link"
+        routerLink="/landing"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+      >
+        <app-icon name="home" [size]="18" />
+        Start
+      </a>
+      <!-- Produkte bleibt aktiv auf der Liste, der Ansicht, dem Bearbeiten und dem Anlegen. -->
+      <a
+        class="main-nav__link"
+        routerLink="/products"
+        [class.is-active]="isProductsSection()"
+        [attr.aria-current]="isProductsSection() ? 'page' : null"
+      >
+        <app-icon name="products" [size]="18" />
+        Produkte
+      </a>
+    </nav>
   </div>
 </header>
