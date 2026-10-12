@@ -2,6 +2,54 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
 
+// Hersteller wiederverwenden statt bei jedem Anlegen oder Bearbeiten einen neuen
+// anzulegen: derselbe Name (ohne Groß-/Kleinschreibung) ist derselbe Hersteller.
+// Angegebene Adresse und Land aktualisieren den bestehenden Eintrag.
+async function findOrCreateManufacturer({ name, address, country }) {
+    const existing = await pool.query(
+        `SELECT manufacturer_id FROM manufacturers
+         WHERE lower(trim(name)) = lower(trim($1))
+         ORDER BY manufacturer_id LIMIT 1;`,
+        [name]
+    );
+    if (existing.rowCount > 0) {
+        const id = existing.rows[0].manufacturer_id;
+        await pool.query(
+            `UPDATE manufacturers
+             SET address = COALESCE(NULLIF($2, ''), address),
+                 country = COALESCE(NULLIF($3, ''), country)
+             WHERE manufacturer_id = $1;`,
+            [id, address || '', country || '']
+        );
+        return id;
+    }
+    const created = await pool.query(
+        `INSERT INTO manufacturers (name, address, country)
+         VALUES ($1, $2, $3)
+         RETURNING manufacturer_id;`,
+        [name.trim(), address || '', country || '']
+    );
+    return created.rows[0].manufacturer_id;
+}
+
+const NUTRIENTS = ["energy_kcal", "protein_g", "fat_g", "saturated_fat_g",
+    "carbohydrates_g", "sugar_g", "fiber_g", "sodium_mg"];
+
+// Nährwerte aus dem Request. Das Frontend schickt sie als nutritionInfo (so
+// heißen sie auch in den Antworten der API), ältere Clients als nutrition_info.
+// Leere Felder bleiben leer (null) statt 0: "keine Angabe" ist nicht "0 g".
+// Gibt null zurück, wenn gar nichts angegeben ist.
+function readNutrition(body) {
+    const input = body.nutritionInfo ?? body.nutrition_info;
+    if (!input) return null;
+    const values = NUTRIENTS.map((key) => {
+        if (input[key] === "" || input[key] == null) return null;
+        // energy_kcal ist im Schema INTEGER: 210,5 kcal würde das Speichern abbrechen.
+        return key === "energy_kcal" ? Math.round(Number(input[key])) : Number(input[key]);
+    });
+    return values.some((value) => value !== null) ? values : null;
+}
+
 // get all products
 router.get("/", async (req, res) => {
     try {
@@ -232,7 +280,6 @@ router.post("/", async (req, res) => {
         caffeine_mg = 0,
         deposit_amount = 0,
         ingredients = [],
-        nutrition_info = {},
         manufacturer = {}
     } = req.body;
 
@@ -252,13 +299,7 @@ router.post("/", async (req, res) => {
         }
 
         if (manufacturer.name) {
-            const manufacturerResult = await pool.query(
-                `INSERT INTO manufacturers (name, address, country)
-                 VALUES ($1, $2, $3)
-                 RETURNING manufacturer_id;`,
-                [manufacturer.name, manufacturer.address || '', manufacturer.country || '']
-            );
-            manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
+            manufacturer_id = await findOrCreateManufacturer(manufacturer);
         }
 
         const productResult = await pool.query(
@@ -313,20 +354,13 @@ router.post("/", async (req, res) => {
             }
         }
 
-        if (Object.keys(nutrition_info).length > 0) {
+        const nutrition = readNutrition(req.body);
+        if (nutrition) {
             await pool.query(
                 `INSERT INTO nutrition_info (product_id, energy_kcal, protein_g, fat_g, saturated_fat_g,
                                              carbohydrates_g, sugar_g, fiber_g, sodium_mg)
                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-                [product_id,
-                    nutrition_info.energy_kcal || 0,
-                    nutrition_info.protein_g || 0,
-                    nutrition_info.fat_g || 0,
-                    nutrition_info.saturated_fat_g || 0,
-                    nutrition_info.carbohydrates_g || 0,
-                    nutrition_info.sugar_g || 0,
-                    nutrition_info.fiber_g || 0,
-                    nutrition_info.sodium_mg || 0]
+                [product_id, ...nutrition]
             );
         }
 
@@ -358,8 +392,7 @@ router.put("/:id", async (req, res) => {
         alcohol_volume = 0,
         caffeine_mg = 0,
         deposit_amount = 0,
-        ingredients = [],
-        nutrition_info = {}
+        ingredients = []
     } = req.body;
 
     if (!ean_gtin || !name) {
@@ -385,13 +418,9 @@ router.put("/:id", async (req, res) => {
             const { name: manufacturer_name, address: manufacturer_address, country: manufacturer_country } = req.body.manufacturer;
 
             if (manufacturer_name) {
-                const manufacturerResult = await pool.query(
-                    `INSERT INTO manufacturers (name, address, country)
-             VALUES ($1, $2, $3)
-             RETURNING manufacturer_id;`,
-                    [manufacturer_name, manufacturer_address, manufacturer_country]
-                );
-                manufacturer_id = manufacturerResult.rows[0].manufacturer_id;
+                manufacturer_id = await findOrCreateManufacturer({
+                    name: manufacturer_name, address: manufacturer_address, country: manufacturer_country
+                });
             }
         }
 
@@ -453,31 +482,25 @@ router.put("/:id", async (req, res) => {
         }
 
 
-        if (Object.keys(nutrition_info).length > 0) {
+        // Beim Bearbeiten ersetzen die Formularwerte die gespeicherten, auch
+        // wenn Felder geleert wurden.
+        if (req.body.nutritionInfo || req.body.nutrition_info) {
+            const nutrition = readNutrition(req.body) ?? NUTRIENTS.map(() => null);
             await pool.query(
                 `INSERT INTO nutrition_info (product_id, energy_kcal, protein_g, fat_g, saturated_fat_g,
-                                     carbohydrates_g, sugar_g, fiber_g, sodium_mg)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         ON CONFLICT (product_id) 
-         DO UPDATE 
-         SET 
-             energy_kcal = EXCLUDED.energy_kcal,
-             protein_g = EXCLUDED.protein_g,
-             fat_g = EXCLUDED.fat_g,
-             saturated_fat_g = EXCLUDED.saturated_fat_g,
-             carbohydrates_g = EXCLUDED.carbohydrates_g,
-             sugar_g = EXCLUDED.sugar_g,
-             fiber_g = EXCLUDED.fiber_g,
-             sodium_mg = EXCLUDED.sodium_mg;`,
-                [product_id,
-                    nutrition_info.energy_kcal || 0,
-                    nutrition_info.protein_g || 0,
-                    nutrition_info.fat_g || 0,
-                    nutrition_info.saturated_fat_g || 0,
-                    nutrition_info.carbohydrates_g || 0,
-                    nutrition_info.sugar_g || 0,
-                    nutrition_info.fiber_g || 0,
-                    nutrition_info.sodium_mg || 0]
+                                             carbohydrates_g, sugar_g, fiber_g, sodium_mg)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                 ON CONFLICT (product_id)
+                 DO UPDATE SET
+                     energy_kcal = EXCLUDED.energy_kcal,
+                     protein_g = EXCLUDED.protein_g,
+                     fat_g = EXCLUDED.fat_g,
+                     saturated_fat_g = EXCLUDED.saturated_fat_g,
+                     carbohydrates_g = EXCLUDED.carbohydrates_g,
+                     sugar_g = EXCLUDED.sugar_g,
+                     fiber_g = EXCLUDED.fiber_g,
+                     sodium_mg = EXCLUDED.sodium_mg;`,
+                [product_id, ...nutrition]
             );
         }
 

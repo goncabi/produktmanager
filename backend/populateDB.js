@@ -118,6 +118,35 @@ async function populateDatabase() {
             );
         }
 
+        // Reparatur nach zwei alten Fehlern beim Bearbeiten:
+        // 1. Jede Bearbeitung legte einen neuen Hersteller an. Gleichnamige
+        //    Hersteller (ohne Groß-/Kleinschreibung) zum ältesten zusammenführen.
+        const duplicateManufacturers = `
+            SELECT manufacturer_id,
+                   MIN(manufacturer_id) OVER (PARTITION BY lower(trim(name))) AS keep_id
+            FROM manufacturers`;
+        await pool.query(`
+            UPDATE products p SET manufacturer_id = d.keep_id
+            FROM (${duplicateManufacturers}) d
+            WHERE p.manufacturer_id = d.manufacturer_id AND d.manufacturer_id <> d.keep_id;
+        `);
+        await pool.query(`
+            DELETE FROM manufacturers m
+            USING (${duplicateManufacturers}) d
+            WHERE m.manufacturer_id = d.manufacturer_id AND d.manufacturer_id <> d.keep_id;
+        `);
+        // 2. Das Bearbeiten schrieb Namen um ("Coca-Cola" → "Coca-cola"). Bei
+        //    den Beispielprodukten die ursprüngliche Schreibweise zurückholen,
+        //    wenn sich nur die Groß-/Kleinschreibung unterscheidet.
+        for (const product of products) {
+            const [, , , ean, name] = product;
+            await pool.query(
+                `UPDATE products SET name = $2
+                 WHERE ean_gtin = $1 AND lower(name) = lower($2) AND name <> $2;`,
+                [ean, name]
+            );
+        }
+
         await syncIdSequence('categories', 'category_id');
         await syncIdSequence('manufacturers', 'manufacturer_id');
         await syncIdSequence('products', 'product_id');

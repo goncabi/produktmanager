@@ -82,15 +82,15 @@ export class EditProductComponent implements OnInit {
         if (product) {
           this.editProductForm.patchValue({
             ...product,
-            name: this.capitalizeWords(product.name),
+            name: product.name,
             category_id: product.category_id,
             manufacturer: {
-              name: this.capitalizeWords(product.manufacturer.name),
+              name: product.manufacturer.name,
               address: product.manufacturer.address,
               country: product.manufacturer.country
             },
           ingredients: Array.isArray(product.ingredients)
-              ? product.ingredients.map((ing: any) => this.capitalizeWords(ing.name)).join(', ')
+              ? product.ingredients.map((ing: any) => ing.name).filter(Boolean).join(', ')
               : '',
             nutritionInfo: {
               energy_kcal: product.nutritionInfo?.energy_kcal ?? null,
@@ -176,16 +176,6 @@ export class EditProductComponent implements OnInit {
 
     cancelEdit(): void {
     this.router.navigate(['/products']);
-  }
-
-  capitalizeWords(value: string): string {
-    return value
-      ? value
-        .toLowerCase()
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ")
-      : "";
   }
 
 }
