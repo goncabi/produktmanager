@@ -1,112 +1,194 @@
-.landing-page {
+:host { display: block; }
+
+// Sanftes Einblenden wie bisher, aber nur ohne "Bewegung reduzieren".
+@media (prefers-reduced-motion: no-preference) {
+  .hero, .features {
+    animation: fade-in 0.6s ease-out both;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// --- Hero: zwei Spalten, auf dem Handy gestapelt ---------------------------
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 72px 32px 80px;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 48px;
+
+  @media (max-width: 600px) { padding: 40px 16px 56px; gap: 32px; }
+}
+
+.hero__text { flex: 1 1 380px; min-width: 0; }
+
+.hero__title {
+  margin: 0 0 20px;
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--pb-text);
+
+  @media (max-width: 600px) { font-size: 36px; }
+}
+
+.hero__lead {
+  margin: 0 0 32px;
+  max-width: 480px;
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--pb-text-soft);
+}
+
+.hero__cta {
+  min-height: 52px;
+  padding: 0 28px;
+  gap: 10px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.preview {
+  flex: 1 1 380px;
+  min-width: 0;
+  max-width: 520px;
+  padding: 20px;
+  box-sizing: border-box;
+  background: var(--pb-card);
+  border: 1px solid var(--pb-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(43, 38, 34, 0.08);
+}
+
+.preview__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.preview__title { font-size: 18px; font-weight: 700; }
+.preview__count { font-size: 13px; color: var(--pb-muted); }
+
+.preview__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--pb-border-soft);
+}
+
+.preview__initial { width: 44px; height: 44px; font-size: 17px; }
+
+.preview__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview__name { font-size: 15px; font-weight: 500; }
+.preview__ean { font-size: 13px; color: var(--pb-muted); }
+
+.preview__chip {
+  padding: 3px 10px;
+  font-size: 12px;
   text-align: center;
-  font-family: 'Roboto', sans-serif;
+}
 
-  /* Spezifische Farben für Überschriften */
-  h1, h2, h3 {
-    color: #EF6C00 !important; /* Orange für Überschriften */
-  }
+// --- Funktionen ------------------------------------------------------------
+.features {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8px 32px 80px;
+  box-sizing: border-box;
 
-  /* Paragraphen */
+  @media (max-width: 600px) { padding: 0 16px 56px; }
+}
+
+.section-title {
+  margin: 0 0 28px;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.feature { padding: 24px; }
+
+.feature__icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: var(--pb-radius-control);
+  background: var(--pb-chip);
+  color: var(--pb-initial);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feature__title {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.feature__text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--pb-text-soft);
+}
+
+// --- Über ProdBase ---------------------------------------------------------
+.about {
+  background: var(--pb-header);
+  color: var(--pb-header-text);
+}
+
+.about__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 48px;
+
+  @media (max-width: 600px) { padding: 40px 16px; }
+}
+
+.about__title {
+  flex: 0 1 280px;
+  margin: 0;
+  color: var(--pb-header-text);
+}
+
+.about__text {
+  flex: 1 1 360px;
+  min-width: 0;
+  max-width: 640px;
+
   p {
-    color: #807f7f !important; /* Helleres Grau für bessere Lesbarkeit */
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #D9D0C6;
   }
 
-  /* Buttons */
-  .mat-button, .mat-raised-button {
-    color: white !important;
-  }
-
-
-  /* Links im Footer */
-  footer a {
-    color: #F57C00 !important;
-    text-decoration: none;
-  }
-  footer a:hover {
-    text-decoration: underline;
-  }
-
-  .spacer {
-    flex: 1;
-  }
-
-  .hero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 4rem 2rem;
-    gap: 2rem;
-    .hero-content {
-      max-width: 500px;
-      text-align: left;
-    }
-
-    .hero-image {
-      width: 360px;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-      margin-left: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-  }
-
-  .features {
-    padding: 3rem;
-    background: #fff;
-
-    .features-grid {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      mat-card {
-        padding: 1rem;
-        text-align: center;
-        width: 250px;
-      }
-    }
-  }
-
-  .card {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: default;  /* Ya no se muestra como clickeable */
-    transition: transform 0.3s, box-shadow 0.3s;
-    border-radius: 10px;
-    background-color: white;
-  }
-
-  .card:hover {
-    transform: scale(1.03);  /* Todavía se puede resaltar al pasar el ratón */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-
-  .aboutsection {
-    background: #f9f9f9;
-    padding: 3rem;
-
-    .about {
-      max-width: 500px;
-      margin: auto;
-      padding: 2rem;
-    }
-  }
-
-  footer {
-    padding: 1rem;
-
-    a {
-      color: #ffcc00;
-      text-decoration: none;
-    }
-  }
+  p + p { margin-top: 16px; }
 }

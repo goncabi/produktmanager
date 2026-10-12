@@ -240,22 +240,6 @@ textarea:focus-visible {
 }
 
 // ---------------------------------------------------------------------------
-// ALT: Regeln für die noch nicht umgestalteten Material-Bildschirme.
-// Werden entfernt, sobald alle Bildschirme umgestellt sind.
-// ---------------------------------------------------------------------------
-mat-card {
-  background-color: var(--pb-card);
-  color: var(--pb-text);
-  border-radius: var(--pb-radius-card);
-}
-
-mat-form-field { width: 100%; }
-
-@media (max-width: 768px) {
-  .details-grid { grid-template-columns: 1fr; }
-}
-
-// ---------------------------------------------------------------------------
 // Formularseiten (Anlegen, Bearbeiten)
 // ---------------------------------------------------------------------------
 .pb-form-page { padding-top: 24px; padding-bottom: 48px; }

@@ -16,4 +16,4 @@ contributed by its community and licensed under
 | `ben-and-jerrys.jpg` | [8711327370708](https://world.openfoodfacts.org/product/8711327370708) |
 | `mezzo-mix.jpg` | [5449000017956](https://world.openfoodfacts.org/product/5449000017956) |
 
-`placeholder.svg` is shown when a product has no image or its image fails to load.
+Products without an image, or whose image fails to load, show their initial instead.
