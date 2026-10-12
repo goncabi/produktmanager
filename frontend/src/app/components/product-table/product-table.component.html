@@ -1,85 +1,111 @@
-<div class="mat-elevation-z2" table-container>
-  <mat-toolbar>
-    <span>📦 Produktliste</span>
-  </mat-toolbar>
+<div class="pb-container">
+  <div class="title-row">
+    <h1 class="pb-page-title">Produktliste</h1>
+    <span class="count pb-num">{{ dataSource.filteredData.length }} Produkte</span>
+  </div>
 
-  <!-- Search Field -->
-  <mat-form-field appearance="outline" style="margin: 10px; width: 465px;">
-    <mat-label>Produkt suchen</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Suche nach EAN, Produktname, Kategorie oder Hersteller">
-  </mat-form-field>
+  <div class="toolbar">
+    <div class="search">
+      <app-icon name="search" [size]="18" class="search__icon" />
+      <input
+        type="search"
+        class="search__input"
+        aria-label="Produkt suchen"
+        placeholder="Produkt suchen"
+        (input)="applyFilter($event)"
+      >
+    </div>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- Image Column -->
-    <ng-container matColumnDef="image">
-      <mat-header-cell *matHeaderCellDef> Bild </mat-header-cell>
-      <mat-cell *matCellDef="let product">
-        <img [src]="product.image_url || placeholderImage" (error)="showPlaceholder($event)"
-             [alt]="product.name" width="100" height="100">
-      </mat-cell>
-    </ng-container>
+    <a class="pb-btn pb-btn--primary" routerLink="/create-product">
+      <app-icon name="plus" [size]="18" [strokeWidth]="2.2" />
+      Neues Produkt
+    </a>
+  </div>
 
-    <!-- EAN Column -->
-    <ng-container matColumnDef="ean">
-      <mat-header-cell *matHeaderCellDef> EAN/GTIN </mat-header-cell>
-      <mat-cell *matCellDef="let product"> {{ product.ean_gtin }} </mat-cell>
-    </ng-container>
-
-    <!-- Category Column -->
-    <ng-container matColumnDef="category">
-      <mat-header-cell *matHeaderCellDef> Kategorie </mat-header-cell>
-      <mat-cell *matCellDef="let product"> {{ product.category_name }} </mat-cell>
-    </ng-container>
-
-    <!-- Product Name Column -->
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef> Produktname </mat-header-cell>
-      <mat-cell *matCellDef="let product"> {{ product.name }} </mat-cell>
-    </ng-container>
-
-    <!-- Weight/Volume Column -->
-    <ng-container matColumnDef="weightVolume">
-      <mat-header-cell *matHeaderCellDef> Gewicht/ Volumen </mat-header-cell>
-      <mat-cell *matCellDef="let product">
-        {{ product | amount }}
-      </mat-cell>
-    </ng-container>
-
-    <!-- Manufacturer Column -->
-    <ng-container matColumnDef="manufacturer">
-      <mat-header-cell *matHeaderCellDef> Hersteller </mat-header-cell>
-      <mat-cell *matCellDef="let product"> {{ product.manufacturer.name }} </mat-cell>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef> Aktionen </mat-header-cell>
-      <mat-cell *matCellDef="let product">
-        <div class="action-buttons">
-          <!-- Pordukt anzeigen -->
-          <button mat-mini-fab (click)="viewDetails(product); $event.stopPropagation()" matTooltip="Details ansehen">
-            <mat-icon>visibility</mat-icon>
-          </button>
-
-          <!-- Produkt ändern -->
-          <button mat-mini-fab color="warn" (click)="editProduct(product); $event.stopPropagation()" matTooltip="Bearbeiten">
-            <mat-icon>edit</mat-icon>
-          </button>
-
-          <!-- Produkt löschen -->
-          <button mat-mini-fab color="warn" (click)="deleteProduct(product); $event.stopPropagation()" matTooltip="Löschen">
-            <mat-icon>delete</mat-icon>
-          </button>
-
-        </div>
-      </mat-cell>
-    </ng-container>
-
-    <!-- Header -->
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-    <!-- Zeile mit Click-->
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewDetails(row)"></mat-row>
-  </table>
-
+  <div class="pb-card table-card">
+    <table class="product-table">
+      <caption class="visually-hidden">Produktliste</caption>
+      <thead>
+        <tr>
+          <th scope="col">Produkt</th>
+          <th scope="col">Kategorie</th>
+          <th scope="col">Gewicht / Volumen</th>
+          <th scope="col">Hersteller</th>
+          <th scope="col" class="actions-col">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of dataSource.filteredData; track product.product_id) {
+          <!-- Klick auf die Zeile öffnet die Details wie bisher; per Tastatur
+               führen der Produktname und der Augen-Button dorthin. -->
+          <tr (click)="viewDetails(product)">
+            <td>
+              <div class="product-cell">
+                @if (product.image_url && !failedImages.has(product.product_id)) {
+                  <img
+                    class="pb-thumb"
+                    [src]="product.image_url"
+                    alt=""
+                    width="48"
+                    height="48"
+                    (error)="failedImages.add(product.product_id)"
+                  >
+                } @else {
+                  <span class="pb-thumb pb-thumb--initial thumb-initial" aria-hidden="true">
+                    {{ product.name.charAt(0) }}
+                  </span>
+                }
+                <div class="product-cell__text">
+                  <a
+                    class="product-cell__name"
+                    [routerLink]="['/product', product.product_id]"
+                    (click)="$event.stopPropagation()"
+                  >{{ product.name }}</a>
+                  <span class="product-cell__ean pb-num">{{ product.ean_gtin }}</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="pb-chip">{{ product.category_name }}</span></td>
+            <td class="pb-num">{{ product | amount }}</td>
+            <td>{{ product.manufacturer.name }}</td>
+            <td>
+              <div class="actions">
+                <button
+                  type="button"
+                  class="pb-icon-btn"
+                  aria-label="Details anzeigen"
+                  matTooltip="Details anzeigen"
+                  (click)="viewDetails(product); $event.stopPropagation()"
+                >
+                  <app-icon name="eye" />
+                </button>
+                <button
+                  type="button"
+                  class="pb-icon-btn"
+                  aria-label="Bearbeiten"
+                  matTooltip="Bearbeiten"
+                  (click)="editProduct(product); $event.stopPropagation()"
+                >
+                  <app-icon name="edit" />
+                </button>
+                <button
+                  type="button"
+                  class="pb-icon-btn"
+                  aria-label="Löschen"
+                  matTooltip="Löschen"
+                  (click)="deleteProduct(product); $event.stopPropagation()"
+                >
+                  <app-icon name="trash" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="empty-row">
+            <td colspan="5">Keine Produkte gefunden.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>

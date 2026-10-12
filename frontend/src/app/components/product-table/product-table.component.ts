@@ -1,50 +1,25 @@
-import { AmountPipe } from '../../pipes/amount.pipe';
-import { PLACEHOLDER_IMAGE, showPlaceholder } from '../../pipes/product-image';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import {MatCell, MatHeaderCell, MatHeaderRow, MatRow, MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router, RouterLink } from '@angular/router';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
-import {Product} from '../../interfaces/models';
-import { Router } from '@angular/router';
-
-import {MatIcon} from '@angular/material/icon';
-import {MatToolbar} from '@angular/material/toolbar';
-import {MatButtonModule} from '@angular/material/button';
-import {MatTooltip} from '@angular/material/tooltip';
-
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatDialog} from '@angular/material/dialog';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-
+import { Product } from '../../interfaces/models';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { IconComponent } from '../icon/icon.component';
+import { AmountPipe } from '../../pipes/amount.pipe';
 
 @Component({
   selector: 'app-product-table',
   templateUrl: './product-table.component.html',
-  imports: [
-    MatTableModule,
-    MatHeaderCell,
-    MatCell,
-    MatTable,
-    MatHeaderRow,
-    MatRow,
-    MatIcon,
-    MatToolbar,
-    MatButtonModule,
-    MatTooltip,
-    MatSnackBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    AmountPipe
-],
+  imports: [RouterLink, MatTooltip, IconComponent, AmountPipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./product-table.component.scss']
 })
 export class ProductTableComponent implements OnInit {
-  readonly placeholderImage = PLACEHOLDER_IMAGE;
-  readonly showPlaceholder = showPlaceholder;
-
-  displayedColumns: string[] = ['image', 'ean', 'category', 'name', 'weightVolume', 'manufacturer', 'actions'];
+  // Produkte, deren Bild nicht lädt: dort erscheint die Initiale.
+  readonly failedImages = new Set<number>();
 
   dataSource = new MatTableDataSource<Product>();
 
