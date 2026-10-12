@@ -11,7 +11,11 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false }
 });
 pool.connect()
-    .then(() => console.log("💾 PostgreSQL erfolgreich verbunden!"))
+    .then((client) => {
+        console.log("💾 PostgreSQL erfolgreich verbunden!");
+        // Die Testverbindung zurückgeben, sonst bleibt sie für immer belegt.
+        client.release();
+    })
     .catch(err => console.error("❌ Verbindung fehlgeschlagen:", err));
 
 module.exports = pool;

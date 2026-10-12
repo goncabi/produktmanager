@@ -489,26 +489,6 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-// DELETE all data from the database
-router.delete("/reset", async (req, res) => {
-    try {
-        await pool.query(`DELETE FROM product_ingredients;`);
-
-        await pool.query(`DELETE FROM nutrition_info;`);
-
-        await pool.query(`DELETE FROM products;`);
-
-        await pool.query(`DELETE FROM categories;`);
-        await pool.query(`DELETE FROM manufacturers;`);
-        await pool.query(`DELETE FROM ingredients;`);
-
-        res.status(200).json({ message: "✅ Datenbank erfolgreich zurückgesetzt." });
-    } catch (error) {
-        console.error("Fehler beim Zurücksetzen der Datenbank:", error);
-        res.status(500).json({ error: "Fehler beim Zurücksetzen der Datenbank." });
-    }
-});
-
 //delete a product
 router.delete("/:id", async (req, res) => {
     const { id } = req.params;
