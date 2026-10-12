@@ -1,3 +1,6 @@
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { AmountPipe } from '../../pipes/amount.pipe';
+import { PLACEHOLDER_IMAGE, showPlaceholder } from '../../pipes/product-image';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
@@ -17,9 +20,12 @@ import {MatDialog} from '@angular/material/dialog';
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
+  imports: [MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule, CurrencyPipe, DecimalPipe, AmountPipe] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
+  readonly placeholderImage = PLACEHOLDER_IMAGE;
+  readonly showPlaceholder = showPlaceholder;
+
   product: Product = {
     product_id: 0,
     ean_gtin: '',

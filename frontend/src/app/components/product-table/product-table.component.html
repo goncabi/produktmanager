@@ -14,9 +14,8 @@
     <ng-container matColumnDef="image">
       <mat-header-cell *matHeaderCellDef> Bild </mat-header-cell>
       <mat-cell *matCellDef="let product">
-        @if (product.image_url) {
-          <img [src]="product.image_url" alt="{{product.name}}" width="100" height="100">
-        }
+        <img [src]="product.image_url || placeholderImage" (error)="showPlaceholder($event)"
+             [alt]="product.name" width="100" height="100">
       </mat-cell>
     </ng-container>
 
@@ -42,7 +41,7 @@
     <ng-container matColumnDef="weightVolume">
       <mat-header-cell *matHeaderCellDef> Gewicht/ Volumen </mat-header-cell>
       <mat-cell *matCellDef="let product">
-        {{ product.net_volume_l ? product.net_volume_l + ' L' : product.net_weight_g + ' g' }}
+        {{ product | amount }}
       </mat-cell>
     </ng-container>
 

@@ -1,3 +1,5 @@
+import { AmountPipe } from '../../pipes/amount.pipe';
+import { PLACEHOLDER_IMAGE, showPlaceholder } from '../../pipes/product-image';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {MatCell, MatHeaderCell, MatHeaderRow, MatRow, MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ProductService } from '../../services/product.service';
@@ -32,12 +34,16 @@ import {MatInputModule} from '@angular/material/input';
     MatTooltip,
     MatSnackBarModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    AmountPipe
 ],
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./product-table.component.scss']
 })
 export class ProductTableComponent implements OnInit {
+  readonly placeholderImage = PLACEHOLDER_IMAGE;
+  readonly showPlaceholder = showPlaceholder;
+
   displayedColumns: string[] = ['image', 'ean', 'category', 'name', 'weightVolume', 'manufacturer', 'actions'];
 
   dataSource = new MatTableDataSource<Product>();

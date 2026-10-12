@@ -64,17 +64,19 @@ async function populateDatabase() {
         // ===========================
         // 4. PRODUCTS
         // ===========================
+        // Volumen in Litern (0,5 L, nicht 500). Bilder liegen im Frontend unter
+        // public/products (Open Food Facts, CC BY-SA; siehe ATTRIBUTION.md dort).
         const products = [
-            [1, 1, 1, '1234567890123', "Coca-Cola", "Erfrischungsgetränk", 1.50, 1.20, 0, 500, 0, 0, 0, 0.25, "https://m.media-amazon.com/images/I/51v8nyxSOYL._SL1500_.jpg"],
-            [2, 2, 2, '9876543210987', "KitKat", "Schokoladenriegel", 1.00, 0.90, 45, 0, 0, 0, 0, 0, "https://privatgrossisten.se/cdn/shop/files/KitKat_Mini_6_68_KG.jpg?v=1735914470&width=1445"],
-            [3, 3, 3, '4567890123456', "Magnum Eis", "Vanilleeis mit Schokolade", 2.50, 2.20, 120, 0, 0, 0, 0, 0, "https://assets.unileversolutions.com/v1/117691546.jpg"],
-            [4, 1, 1, '3216549873210', "Fanta", "Orangenlimonade", 1.30, 1.10, 0, 330, 0, 0, 0, 0.25, "https://outofhome.se/media/catalog/product/cache/30/image/17f82f742ffe127f42dca9de82fb58b1/f/a/fanta-orange-pet_50cl_283600.jpg"],
-            [5, 2, 2, '8529637412580', "Lion", "Schokoriegel mit Karamell", 1.20, 1.00, 50, 0, 0, 0, 0, 0, "https://cdn02.plentymarkets.com/mgt7h3rmbzvp/item/images/1199913242/full/1199913242-Nestle-Lion--Schokolade--42g-Riegel_1.jpg"],
-            [6, 3, 3, '9638527412580', "Cornetto", "Eiswaffel mit Schokoladenfüllung", 2.00, 1.80, 110, 0, 0, 0, 0, 0, "https://varsego.se/storage/D1218D1011426445E6F5565D0C12F63CF5F25C05B202A0745FAFC6CE53F881FF/c220da5dcd4c4bf385c9925b91af8be2/png/media/f7bb822bfdf74540b7c00d51135cf969/13794%20Cornetto%20Soft%20Cookie_Chocolate%20.png"],
-            [7, 1, 1, '7412589638520', "Sprite", "Zitronenlimonade", 1.50, 1.20, 0, 330, 0, 0, 0, 0.25, "https://gottebiten.se/media/catalog/product/cache/image/1000x1320/e9c3970ab036de70892d86c6d221abfe/s/p/sprite-burk_1.jpg"],
-            [8, 2, 2, '6547891234560', "Smarties", "Schokolinsen", 1.00, 0.85, 35, 0, 0, 0, 0, 0, "https://gottebiten.se/media/catalog/product/cache/image/1000x1320/e9c3970ab036de70892d86c6d221abfe/7/6/7613034754424.jpg"],
-            [9, 3, 3, '1478523690123', "Ben & Jerry's", "Schokoladeneis mit Keksstücken", 3.00, 2.80, 500, 0, 0, 0, 0, 0, "https://www.benjerry.se/files/live/sites/systemsite/files/EU%20Specific%20Assets/Flavors/Product%20Assets/Cookie%20Vermont-ster%20Sundae/37678_AT-BE-CH-DE-FR-NL_IC_Cookie-Vermont-ster-Sundae_427ml_Open_Brand-1920px_8711327539624.png"],
-            [10, 1, 1, '9876543210123', "Mezzo Mix", "Cola mit Orangen-Geschmack", 1.50, 1.20, 0, 330, 0, 0, 0, 0.25, "https://snamix.se/2068-thickbox_default/mezzo-mix.jpg"]
+            [1, 1, 1, '1234567890123', "Coca-Cola", "Erfrischungsgetränk", 1.50, 1.20, 0, 0.5, 0, 0, 0, 0.25, "/products/coca-cola.jpg"],
+            [2, 2, 2, '9876543210987', "KitKat", "Schokoladenriegel", 1.00, 0.90, 45, 0, 0, 0, 0, 0, "/products/kitkat.jpg"],
+            [3, 3, 3, '4567890123456', "Magnum Eis", "Vanilleeis mit Schokolade", 2.50, 2.20, 120, 0, 0, 0, 0, 0, "/products/magnum.jpg"],
+            [4, 1, 1, '3216549873210', "Fanta", "Orangenlimonade", 1.30, 1.10, 0, 0.33, 0, 0, 0, 0.25, "/products/fanta.jpg"],
+            [5, 2, 2, '8529637412580', "Lion", "Schokoriegel mit Karamell", 1.20, 1.00, 50, 0, 0, 0, 0, 0, null],
+            [6, 3, 3, '9638527412580', "Cornetto", "Eiswaffel mit Schokoladenfüllung", 2.00, 1.80, 110, 0, 0, 0, 0, 0, "/products/cornetto.jpg"],
+            [7, 1, 1, '7412589638520', "Sprite", "Zitronenlimonade", 1.50, 1.20, 0, 0.33, 0, 0, 0, 0.25, "/products/sprite.jpg"],
+            [8, 2, 2, '6547891234560', "Smarties", "Schokolinsen", 1.00, 0.85, 35, 0, 0, 0, 0, 0, "/products/smarties.jpg"],
+            [9, 3, 3, '1478523690123', "Ben & Jerry's", "Schokoladeneis mit Keksstücken", 3.00, 2.80, 500, 0, 0, 0, 0, 0, "/products/ben-and-jerrys.jpg"],
+            [10, 1, 1, '9876543210123', "Mezzo Mix", "Cola mit Orangen-Geschmack", 1.50, 1.20, 0, 0.33, 0, 0, 0, 0.25, "/products/mezzo-mix.jpg"]
         ];
 
         for (const product of products) {
@@ -87,6 +89,33 @@ async function populateDatabase() {
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
                 ON CONFLICT (ean_gtin) DO NOTHING
             `, product);
+        }
+
+        // Korrektur für Datenbanken, die mit den alten Beispieldaten befüllt
+        // wurden: Volumen standen in Millilitern in der Liter-Spalte, und die
+        // Bilder kamen von fremden Shops, die das Einbinden teils blockieren.
+        // Nur Zeilen, die noch den alten Wert haben: von Hand geänderte bleiben.
+        const legacyFixes = [
+            ['1234567890123', "https://m.media-amazon.com/images/I/51v8nyxSOYL._SL1500_.jpg", 500, "/products/coca-cola.jpg", 0.5],
+            ['9876543210987', "https://privatgrossisten.se/cdn/shop/files/KitKat_Mini_6_68_KG.jpg?v=1735914470&width=1445", 0, "/products/kitkat.jpg", 0],
+            ['4567890123456', "https://assets.unileversolutions.com/v1/117691546.jpg", 0, "/products/magnum.jpg", 0],
+            ['3216549873210', "https://outofhome.se/media/catalog/product/cache/30/image/17f82f742ffe127f42dca9de82fb58b1/f/a/fanta-orange-pet_50cl_283600.jpg", 330, "/products/fanta.jpg", 0.33],
+            ['8529637412580', "https://cdn02.plentymarkets.com/mgt7h3rmbzvp/item/images/1199913242/full/1199913242-Nestle-Lion--Schokolade--42g-Riegel_1.jpg", 0, null, 0],
+            ['9638527412580', "https://varsego.se/storage/D1218D1011426445E6F5565D0C12F63CF5F25C05B202A0745FAFC6CE53F881FF/c220da5dcd4c4bf385c9925b91af8be2/png/media/f7bb822bfdf74540b7c00d51135cf969/13794%20Cornetto%20Soft%20Cookie_Chocolate%20.png", 0, "/products/cornetto.jpg", 0],
+            ['7412589638520', "https://gottebiten.se/media/catalog/product/cache/image/1000x1320/e9c3970ab036de70892d86c6d221abfe/s/p/sprite-burk_1.jpg", 330, "/products/sprite.jpg", 0.33],
+            ['6547891234560', "https://gottebiten.se/media/catalog/product/cache/image/1000x1320/e9c3970ab036de70892d86c6d221abfe/7/6/7613034754424.jpg", 0, "/products/smarties.jpg", 0],
+            ['1478523690123', "https://www.benjerry.se/files/live/sites/systemsite/files/EU%20Specific%20Assets/Flavors/Product%20Assets/Cookie%20Vermont-ster%20Sundae/37678_AT-BE-CH-DE-FR-NL_IC_Cookie-Vermont-ster-Sundae_427ml_Open_Brand-1920px_8711327539624.png", 0, "/products/ben-and-jerrys.jpg", 0],
+            ['9876543210123', "https://snamix.se/2068-thickbox_default/mezzo-mix.jpg", 330, "/products/mezzo-mix.jpg", 0.33]
+        ];
+        for (const [ean, oldImage, oldVolume, newImage, newVolume] of legacyFixes) {
+            await pool.query(
+                `UPDATE products SET image_url = $3 WHERE ean_gtin = $1 AND image_url = $2;`,
+                [ean, oldImage, newImage]
+            );
+            await pool.query(
+                `UPDATE products SET net_volume_l = $3 WHERE ean_gtin = $1 AND net_volume_l = $2;`,
+                [ean, oldVolume, newVolume]
+            );
         }
 
         await syncIdSequence('categories', 'category_id');

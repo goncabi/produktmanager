@@ -6,30 +6,27 @@
     <div class="details-grid">
 
       <div class="image-container">
-        @if (product.image_url) {
-          <img
-            [src]="product.image_url"
-            alt="Produktbild"
-            class="product-image">
-        } @else {
-          <img src="https://imgs.search.brave.com/g0Lq0pNNjVYn7IyzAj5gJNMz7KzMVJmJ9NLI-FThLlU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy82/LzY1L05vLUltYWdl/LVBsYWNlaG9sZGVy/LnN2Zw" alt="Kein Bild verfügbar" class="product-image">
-        }
+        <img
+          [src]="product.image_url || placeholderImage"
+          (error)="showPlaceholder($event)"
+          [alt]="product.name"
+          class="product-image">
       </div>
 
       <div class="info-section">
         <p><strong>EAN:</strong> {{ product.ean_gtin || 'Keine' }}</p>
         <p><strong>Kategorie:</strong> {{ product.category_name || 'Keine' }}</p>
         <p><strong>Produktname:</strong> {{ product.name || 'Keine' }}</p>
-        <p><strong>Alkoholgehalt:</strong> {{ product.alcohol_volume + '%' || 'Keine' }}</p>
+        <p><strong>Alkoholgehalt:</strong> {{ (product.alcohol_volume ?? 0) | number: '1.0-1' }} %</p>
       </div>
 
       <div class="info-section">
-        <p><strong>Preis Lieferung:</strong> {{ product.price_delivery || 'Keine' }} €</p>
-        <p><strong>Preis Abholung:</strong> {{ product.price_pickup || 'Keine' }} €</p>
+        <p><strong>Preis Lieferung:</strong> {{ product.price_delivery != null ? (product.price_delivery | currency) : 'Keine' }}</p>
+        <p><strong>Preis Abholung:</strong> {{ product.price_pickup != null ? (product.price_pickup | currency) : 'Keine' }}</p>
         <p><strong>Gewicht/Volumen:</strong>
-        {{ product.net_volume_l  + ' L' || product.net_weight_g + ' g' }}
+        {{ product | amount }}
       </p>
-      <p><strong>Pfand:</strong> {{ product.deposit_amount  + ' €' || 'Keine' }}</p>
+      <p><strong>Pfand:</strong> {{ product.deposit_amount ? (product.deposit_amount | currency) : 'Keine' }}</p>
     </div>
   </div>
 

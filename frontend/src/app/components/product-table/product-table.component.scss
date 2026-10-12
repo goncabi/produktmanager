@@ -37,3 +37,9 @@
 
 
 }
+
+// Produktfotos haben verschiedene Seitenverhältnisse: ganz zeigen, nicht verzerren.
+mat-cell img {
+  object-fit: contain;
+  background: #fff;
+}

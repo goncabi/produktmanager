@@ -11,8 +11,14 @@
 
 }
 .product-image {
+  // Fester quadratischer Rahmen: Fotos haben verschiedene Seitenverhältnisse
+  // und sollen ganz sichtbar bleiben, ohne verzerrt zu werden.
   width: 220px;
-  height: auto;
+  height: 220px;
+  object-fit: contain;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #fff;
   border-radius: 8px;
   margin-top: 20px;
   box-shadow: var(--mat-sys-level2);
