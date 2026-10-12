@@ -4,7 +4,7 @@ A full-stack web application for managing grocery product data: products,
 categories, manufacturers, ingredients and nutrition facts, backed by a
 normalized PostgreSQL schema.
 
-**Stack:** Angular 19 · Angular Material · Node.js · Express · PostgreSQL
+**Stack:** Angular 22 · Angular Material · Node.js · Express · PostgreSQL · Vitest
 
 ![Product list](frontend/images/produktliste.png)
 
@@ -57,7 +57,7 @@ full commit history.
 
 ## Running locally
 
-**Requirements:** Node.js 18.19 or later, npm, and a PostgreSQL database.
+**Requirements:** Node.js 22.22 or later (`.nvmrc` pins 24), npm, and a PostgreSQL database.
 
 ### Backend
 
@@ -65,8 +65,11 @@ full commit history.
 cd backend
 npm install
 cp .env.example .env   # then fill in your database credentials
-npm run dev            # http://localhost:5000
+npm run dev            # http://localhost:5000, restarts on file changes
 ```
+
+To empty the database during development, run `npm run db:reset -- --yes`. The
+sample data is loaded again on the next server start.
 
 The database connection uses SSL, as required by the hosted database it was
 deployed with. For a local PostgreSQL without SSL, remove the `ssl` option in
@@ -78,6 +81,7 @@ deployed with. For a local PostgreSQL without SSL, remove the `ssl` option in
 cd frontend
 npm install
 npm start              # http://localhost:4200
+npm test               # unit tests with Vitest
 ```
 
 The frontend reads the API URL from `src/environments/`: `localhost:5000` in
