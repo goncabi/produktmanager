@@ -1,0 +1,155 @@
+<div [formGroup]="form()" class="cards">
+  <!-- Bild -->
+  <section class="pb-card form-card" aria-labelledby="sec-image">
+    <h2 id="sec-image" class="form-card__title">Bild</h2>
+    <div class="image-row">
+      <div class="preview">
+        @if (imageUrl() && failedImageUrl !== imageUrl()) {
+          <img class="pb-thumb preview__img" [src]="imageUrl()" alt="Vorschau des Produktbilds"
+               (error)="failedImageUrl = imageUrl()">
+        } @else {
+          <div class="preview__empty">
+            <app-icon name="image" [size]="28" [strokeWidth]="1.8" />
+            <span>Kein Bild verfügbar</span>
+          </div>
+        }
+      </div>
+      <div class="field image-row__field">
+        <label class="field__label" for="f-image_url">Bild-URL</label>
+        <input id="f-image_url" class="field__input" type="url" formControlName="image_url">
+      </div>
+    </div>
+  </section>
+
+  <!-- Produktdetails -->
+  <section class="pb-card form-card" aria-labelledby="sec-details">
+    <h2 id="sec-details" class="form-card__title">Produktdetails</h2>
+
+    <h3 class="pb-eyebrow group-title">Grunddaten</h3>
+    <div class="grid">
+      <div class="field">
+        <label class="field__label" for="f-ean_gtin">EAN<span class="req" aria-hidden="true"> *</span></label>
+        <input id="f-ean_gtin" class="field__input pb-num" type="text" inputmode="numeric" required
+               formControlName="ean_gtin"
+               [attr.aria-invalid]="showError('ean_gtin')"
+               [attr.aria-describedby]="showError('ean_gtin') ? 'f-ean_gtin-error' : null">
+        @if (showError('ean_gtin')) {
+          <p class="field__error" id="f-ean_gtin-error">Pflichtfeld</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="f-category_id">Kategorie<span class="req" aria-hidden="true"> *</span></label>
+        <div class="select">
+          <select id="f-category_id" class="field__input select__control" required
+                  formControlName="category_id"
+                  [attr.aria-invalid]="showError('category_id')"
+                  [attr.aria-describedby]="showError('category_id') ? 'f-category_id-error' : null">
+            <option [ngValue]="null" disabled>Kategorie wählen</option>
+            @for (category of categories(); track category.category_id) {
+              <option [ngValue]="category.category_id">{{ category.name }}</option>
+            }
+          </select>
+          <app-icon name="chevron-down" [size]="16" [strokeWidth]="2.2" class="select__chevron" />
+        </div>
+        @if (showError('category_id')) {
+          <p class="field__error" id="f-category_id-error">Pflichtfeld</p>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="f-name">Produktname<span class="req" aria-hidden="true"> *</span></label>
+        <input id="f-name" class="field__input" type="text" required formControlName="name"
+               [attr.aria-invalid]="showError('name')"
+               [attr.aria-describedby]="showError('name') ? 'f-name-error' : null">
+        @if (showError('name')) {
+          <p class="field__error" id="f-name-error">Pflichtfeld</p>
+        }
+      </div>
+    </div>
+
+    <h3 class="pb-eyebrow group-title">Gewicht und Volumen</h3>
+    <div class="grid">
+      @for (f of sizes; track f.control) {
+        <ng-container *ngTemplateOutlet="numberField; context: { $implicit: f }" />
+      }
+    </div>
+
+    <h3 class="pb-eyebrow group-title">Preise</h3>
+    <div class="grid">
+      @for (f of prices; track f.control) {
+        <ng-container *ngTemplateOutlet="numberField; context: { $implicit: f }" />
+      }
+    </div>
+
+    <h3 class="pb-eyebrow group-title">Weitere Angaben</h3>
+    <div class="grid grid--last">
+      @for (f of extras; track f.control) {
+        <ng-container *ngTemplateOutlet="numberField; context: { $implicit: f }" />
+      }
+      <div class="grid__spacer" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- Zutaten -->
+  <section class="pb-card form-card" aria-labelledby="sec-ingredients">
+    <h2 id="sec-ingredients" class="form-card__title">Zutaten</h2>
+    <div class="field">
+      <label class="field__label" for="f-ingredients">Zutaten (kommagetrennt)</label>
+      <input id="f-ingredients" class="field__input" type="text" formControlName="ingredients">
+    </div>
+  </section>
+
+  <!-- Nährwerte -->
+  <section class="pb-card form-card" aria-labelledby="sec-nutrition" formGroupName="nutritionInfo">
+    <h2 id="sec-nutrition" class="form-card__title">Nährwerte</h2>
+    <div class="grid grid--nutrients">
+      @for (f of nutrients; track f.control) {
+        <div class="field">
+          <label class="field__label" [for]="'f-' + f.control">{{ f.label }}</label>
+          <div class="suffix">
+            <input class="field__input field__input--suffix pb-num" type="number" min="0" step="any" placeholder="0"
+                   [id]="'f-' + f.control" [formControlName]="f.control">
+            <span class="suffix__unit" aria-hidden="true">{{ f.unit }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Hersteller -->
+  <section class="pb-card form-card" aria-labelledby="sec-manufacturer" formGroupName="manufacturer">
+    <h2 id="sec-manufacturer" class="form-card__title">Hersteller</h2>
+    <div class="grid grid--last">
+      <div class="field">
+        <label class="field__label" for="f-manufacturer-name">Name<span class="req" aria-hidden="true"> *</span></label>
+        <input id="f-manufacturer-name" class="field__input" type="text" required formControlName="name"
+               [attr.aria-invalid]="showError('manufacturer.name')"
+               [attr.aria-describedby]="showError('manufacturer.name') ? 'f-manufacturer-name-error' : null">
+        @if (showError('manufacturer.name')) {
+          <p class="field__error" id="f-manufacturer-name-error">Pflichtfeld</p>
+        }
+      </div>
+      <div class="field">
+        <label class="field__label" for="f-manufacturer-address">Adresse</label>
+        <input id="f-manufacturer-address" class="field__input" type="text" formControlName="address">
+      </div>
+      <div class="field">
+        <label class="field__label" for="f-manufacturer-country">Land</label>
+        <input id="f-manufacturer-country" class="field__input" type="text" formControlName="country">
+      </div>
+    </div>
+  </section>
+
+  <!-- Zahlenfeld mit Einheit als Suffix (Produktdetails) -->
+  <ng-template #numberField let-f>
+    <div class="field">
+      <label class="field__label" [for]="'f-' + f.control">{{ f.label }}</label>
+      <div class="suffix">
+        <input class="field__input field__input--suffix pb-num" type="number" min="0" placeholder="0"
+               [step]="f.step ?? 'any'" [id]="'f-' + f.control" [formControlName]="f.control">
+        <span class="suffix__unit" aria-hidden="true">{{ f.unit }}</span>
+      </div>
+    </div>
+  </ng-template>
+</div>

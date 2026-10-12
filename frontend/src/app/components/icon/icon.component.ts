@@ -21,6 +21,7 @@ const PATHS: Record<string, string> = {
   'arrow-right': '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
   'chevron-right': '<path d="M9 6l6 6-6 6"/>',
   'chevron-down': '<path d="M6 9l6 6 6-6"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
   image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
 };
 

@@ -83,7 +83,7 @@ export class ProductTableComponent implements OnInit {
       if (result === true) { // El usuario confirmó
         this.productService.deleteProduct(product.product_id).subscribe({
           next: () => {
-            this.snackBar.open('✅ Produkt erfolgreich gelöscht!', 'Schließen', {
+            this.snackBar.open('Produkt erfolgreich gelöscht!', 'Schließen', {
               duration: 3000,
               verticalPosition: 'top',
               horizontalPosition: 'center'
@@ -92,7 +92,7 @@ export class ProductTableComponent implements OnInit {
           },
           error: (err) => {
             console.error("❌ Fehler beim Löschen des Produkts:", err);
-            this.snackBar.open('❌ Fehler: Das Produkt konnte nicht gelöscht werden.', 'Schließen', {
+            this.snackBar.open('Fehler: Das Produkt konnte nicht gelöscht werden.', 'Schließen', {
               duration: 3000,
               verticalPosition: 'top',
               horizontalPosition: 'center'

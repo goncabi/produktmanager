@@ -1,16 +1,13 @@
+import { RouterLink } from '@angular/router';
+import { IconComponent } from '../icon/icon.component';
+import { ProductFormFieldsComponent, revealErrors } from '../product-form-fields/product-form-fields.component';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 
 import { Product, Category } from '../../interfaces/models';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 
@@ -21,16 +18,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.scss'],
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [
-    MatButtonModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatGridListModule,
-    ReactiveFormsModule,
-    MatSelectModule
-],
+  imports: [ReactiveFormsModule, RouterLink, IconComponent, ProductFormFieldsComponent],
 })export class CreateProductComponent implements OnInit {
+  readonly revealErrors = revealErrors;
   addProductForm!: FormGroup;
   categories: Category[] = [];
   isSubmitting: boolean = false;

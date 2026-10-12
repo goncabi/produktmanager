@@ -1,0 +1,152 @@
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-card {
+  padding: 24px;
+  box-sizing: border-box;
+
+  @media (max-width: 600px) { padding: 20px 16px; }
+}
+
+.form-card__title {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+
+.group-title { margin-bottom: 12px; }
+
+// Felder fließen von drei Spalten bis auf eine (Handy). 180 px statt der 220 px
+// aus dem Entwurf: so bleiben es auf dem Tablet drei Spalten statt 2 + 1.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px 20px;
+  margin-bottom: 28px;
+}
+
+.grid--last { margin-bottom: 0; }
+
+.grid--nutrients {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 0;
+}
+
+// Beschriftung immer über dem Feld.
+.field { min-width: 0; }
+
+.field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pb-text);
+}
+
+.req { color: var(--pb-danger); }
+
+.field__input {
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0 14px;
+  border: 1px solid var(--pb-control);
+  border-radius: var(--pb-radius-control);
+  background: var(--pb-card);
+  font: inherit;
+  font-size: 15px;
+  color: var(--pb-text);
+
+  &::placeholder { color: var(--pb-placeholder); }
+  &:focus-visible { border-color: var(--pb-accent); outline-offset: 1px; }
+
+  &[aria-invalid="true"] { border-color: var(--pb-danger); }
+}
+
+.field__error {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--pb-danger);
+}
+
+// Einheit als Suffix rechts im Feld.
+.suffix { position: relative; }
+
+.field__input--suffix { padding-right: 56px; }
+
+.suffix__unit {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--pb-muted);
+  pointer-events: none;
+}
+
+// Eigener Pfeil statt des Browser-Pfeils.
+.select { position: relative; }
+
+.select__control {
+  padding-right: 40px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.select__chevron {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  color: var(--pb-muted);
+  pointer-events: none;
+}
+
+.image-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 24px;
+}
+
+.image-row__field { flex: 1 1 320px; }
+
+.preview {
+  width: 144px;
+  height: 144px;
+  flex: none;
+}
+
+.preview__img {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  border-radius: var(--pb-radius-control);
+}
+
+.preview__empty {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: var(--pb-radius-control);
+  background: var(--pb-chip);
+  color: var(--pb-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+// Leere dritte Zelle unter "Weitere Angaben": hält die zwei Felder in der
+// Spaltenbreite der Gruppen darüber. Einspaltig überflüssig.
+.grid__spacer {
+  @media (max-width: 600px) { display: none; }
+}

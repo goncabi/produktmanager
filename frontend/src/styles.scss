@@ -212,6 +212,8 @@ textarea:focus-visible {
   }
 
   [aria-current="page"] { color: var(--pb-text); }
+
+  .crumb-sep { display: inline-flex; color: var(--pb-muted); }
 }
 
 // ---------------------------------------------------------------------------
@@ -251,4 +253,41 @@ mat-form-field { width: 100%; }
 
 @media (max-width: 768px) {
   .details-grid { grid-template-columns: 1fr; }
+}
+
+// ---------------------------------------------------------------------------
+// Formularseiten (Anlegen, Bearbeiten)
+// ---------------------------------------------------------------------------
+.pb-form-page { padding-top: 24px; padding-bottom: 48px; }
+
+.pb-form-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 24px;
+  margin-bottom: 24px;
+}
+
+.pb-form-hint {
+  font-size: 14px;
+  color: var(--pb-muted);
+
+  .req { color: var(--pb-danger); }
+}
+
+.pb-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+
+  .pb-btn { min-height: 48px; padding: 0 24px; }
+
+  // Auf dem Handy volle Breite, Speichern oben (Hauptaktion zuerst erreichbar).
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    .pb-btn { width: 100%; }
+  }
 }
