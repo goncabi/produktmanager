@@ -6,10 +6,14 @@
 
       <!-- 📸 Bild -->
       <div class="image-section">
-        <img *ngIf="addProductForm.get('image_url')?.value"
-             [src]="addProductForm.get('image_url')?.value"
-             alt="Produktbild" class="product-image">
-        <p *ngIf="!addProductForm.get('image_url')?.value">Kein Bild verfügbar</p>
+        @if (addProductForm.get('image_url')?.value) {
+          <img
+            [src]="addProductForm.get('image_url')?.value"
+            alt="Produktbild" class="product-image">
+        }
+        @if (!addProductForm.get('image_url')?.value) {
+          <p>Kein Bild verfügbar</p>
+        }
         <mat-form-field appearance="outline">
           <mat-label>Bild-URL</mat-label>
           <input matInput formControlName="image_url">
@@ -26,14 +30,16 @@
               <input matInput formControlName="ean_gtin">
             </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Kategorie</mat-label>
-                <mat-select formControlName="category_id">
-                  <mat-option *ngFor="let category of categories" [value]="category.category_id">
+            <mat-form-field appearance="outline">
+              <mat-label>Kategorie</mat-label>
+              <mat-select formControlName="category_id">
+                @for (category of categories; track category) {
+                  <mat-option [value]="category.category_id">
                     {{ category.name }}
                   </mat-option>
-                </mat-select>
-              </mat-form-field>
+                }
+              </mat-select>
+            </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Produktname</mat-label>

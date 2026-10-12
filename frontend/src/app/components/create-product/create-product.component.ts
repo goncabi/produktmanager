@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
-import { CommonModule } from '@angular/common';
+
 import { Product, Category } from '../../interfaces/models';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -21,7 +21,6 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.scss'],
   imports: [
-    CommonModule,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
@@ -29,7 +28,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
     MatGridListModule,
     ReactiveFormsModule,
     MatSelectModule
-  ],
+],
 })export class CreateProductComponent implements OnInit {
   addProductForm!: FormGroup;
   categories: Category[] = [];

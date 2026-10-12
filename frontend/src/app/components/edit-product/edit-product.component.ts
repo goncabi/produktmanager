@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product, Category } from '../../interfaces/models';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +21,6 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
   templateUrl: './edit-product.component.html',
   styleUrls: ['./edit-product.component.scss'],
   imports: [
-    CommonModule,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
@@ -31,7 +30,7 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
     MatOption,
     MatSelect,
     MatSnackBarModule
-  ],
+],
 })
 export class EditProductComponent implements OnInit {
   editProductForm!: FormGroup;

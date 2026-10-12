@@ -6,10 +6,14 @@
 
       <!-- 📸 Bild -->
       <div class="image-section">
-        <img *ngIf="editProductForm.get('image_url')?.value"
-             [src]="editProductForm.get('image_url')?.value"
-             alt="Produktbild" class="product-image">
-        <p *ngIf="!editProductForm.get('image_url')?.value">Kein Bild verfügbar</p>
+        @if (editProductForm.get('image_url')?.value) {
+          <img
+            [src]="editProductForm.get('image_url')?.value"
+            alt="Produktbild" class="product-image">
+        }
+        @if (!editProductForm.get('image_url')?.value) {
+          <p>Kein Bild verfügbar</p>
+        }
         <mat-form-field appearance="outline">
           <mat-label>Bild-URL</mat-label>
           <input matInput formControlName="image_url">
@@ -27,14 +31,16 @@
               <input matInput formControlName="ean_gtin">
             </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Kategorie</mat-label>
-                <mat-select formControlName="category_id">
-                  <mat-option *ngFor="let category of categories" [value]="category.category_id">
+            <mat-form-field appearance="outline">
+              <mat-label>Kategorie</mat-label>
+              <mat-select formControlName="category_id">
+                @for (category of categories; track category) {
+                  <mat-option [value]="category.category_id">
                     {{ category.name }}
                   </mat-option>
-                </mat-select>
-              </mat-form-field>
+                }
+              </mat-select>
+            </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Produktname</mat-label>
@@ -42,26 +48,26 @@
             </mat-form-field>
 
 
-          <mat-form-field appearance="outline">
-            <mat-label>Brutto-Gewicht (g)</mat-label>
-            <input matInput formControlName="net_weight_g">
-          </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Brutto-Gewicht (g)</mat-label>
+              <input matInput formControlName="net_weight_g">
+            </mat-form-field>
 
 
-        <mat-form-field appearance="outline">
-          <mat-label>Brutto-Volumen (l)</mat-label>
-          <input matInput formControlName="net_volume_l">
-        </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Brutto-Volumen (l)</mat-label>
+              <input matInput formControlName="net_volume_l">
+            </mat-form-field>
 
 
-      <mat-form-field appearance="outline">
-        <mat-label>Netto-Gewicht (g)</mat-label>
-        <input matInput formControlName="gross_weight_g">
-      </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Netto-Gewicht (g)</mat-label>
+              <input matInput formControlName="gross_weight_g">
+            </mat-form-field>
 
-    </div>
+          </div>
 
-        <!-- Second column -->
+          <!-- Second column -->
           <div class="column">
             <mat-form-field appearance="outline">
               <mat-label>Preis Lieferung (€)</mat-label>

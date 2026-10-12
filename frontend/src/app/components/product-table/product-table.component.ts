@@ -3,12 +3,12 @@ import {MatCell, MatHeaderCell, MatHeaderRow, MatRow, MatTable, MatTableDataSour
 import { ProductService } from '../../services/product.service';
 import {Product} from '../../interfaces/models';
 import { Router } from '@angular/router';
-import {CommonModule} from '@angular/common';
+
 import {MatIcon} from '@angular/material/icon';
 import {MatToolbar} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltip} from '@angular/material/tooltip';
-import {NgIf} from '@angular/common';
+
 import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
@@ -30,10 +30,10 @@ import {MatInputModule} from '@angular/material/input';
     MatToolbar,
     MatButtonModule,
     MatTooltip,
-    CommonModule,
-    NgIf, MatSnackBarModule, MatFormFieldModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
     MatInputModule
-  ],
+],
   styleUrls: ['./product-table.component.scss']
 })
 export class ProductTableComponent implements OnInit {

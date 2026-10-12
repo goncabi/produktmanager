@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product, Category} from '../../interfaces/models';
-import { CommonModule } from '@angular/common';
+
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatExpansionModule} from '@angular/material/expansion';
@@ -16,7 +16,7 @@ import {MatDialog} from '@angular/material/dialog';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
+  imports: [MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule] // Agregamos CommonModule y FormsModule
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product = {
