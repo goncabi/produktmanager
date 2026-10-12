@@ -1,89 +1,133 @@
-<div class="product-details-container">
-  <mat-card class="product-card">
-    <mat-card-title>📦 Produktdetails</mat-card-title>
+<div class="pb-container details-page">
+  <nav aria-label="Brotkrumen" class="pb-breadcrumb">
+    <ol>
+      <li><a routerLink="/products">Produkte</a></li>
+      <li aria-hidden="true" class="crumb-sep"><app-icon name="chevron-right" [size]="14" /></li>
+      <li><span aria-current="page">{{ product.name }}</span></li>
+    </ol>
+  </nav>
 
-    <!-- 📌 Info in two columns -->
-    <div class="details-grid">
+  <div class="title-row">
+    <div class="title-row__name">
+      <h1 class="pb-page-title">{{ product.name }}</h1>
+      @if (product.category_name) {
+        <span class="pb-chip">{{ product.category_name }}</span>
+      }
+    </div>
+    <div class="title-row__actions">
+      <button type="button" class="pb-btn pb-btn--danger" (click)="deleteProduct(product)">
+        <app-icon name="trash" [size]="18" />
+        Löschen
+      </button>
+      <button type="button" class="pb-btn pb-btn--primary" (click)="editProduct(product)">
+        <app-icon name="edit" [size]="18" />
+        Bearbeiten
+      </button>
+    </div>
+  </div>
 
-      <div class="image-container">
+  <div class="layout">
+    <div class="pb-card image-card">
+      @if (product.image_url && !imageFailed) {
         <img
-          [src]="product.image_url || placeholderImage"
-          (error)="showPlaceholder($event)"
+          class="pb-thumb product-image"
+          [src]="product.image_url"
           [alt]="product.name"
-          class="product-image">
-      </div>
+          (error)="imageFailed = true"
+        >
+      } @else {
+        <div class="pb-thumb pb-thumb--initial product-image product-image--initial">
+          <span class="product-image__letter" aria-hidden="true">{{ product.name.charAt(0) }}</span>
+          <span class="product-image__caption">Kein Bild verfügbar</span>
+        </div>
+      }
+    </div>
 
-      <div class="info-section">
-        <p><strong>EAN:</strong> {{ product.ean_gtin || 'Keine' }}</p>
-        <p><strong>Kategorie:</strong> {{ product.category_name || 'Keine' }}</p>
-        <p><strong>Produktname:</strong> {{ product.name || 'Keine' }}</p>
-        <p><strong>Alkoholgehalt:</strong> {{ (product.alcohol_volume ?? 0) | number: '1.0-1' }} %</p>
-      </div>
+    <div class="content">
+      <section class="pb-card section" aria-labelledby="facts-title">
+        <h2 id="facts-title" class="pb-eyebrow section__title">Produkt</h2>
+        <dl class="facts">
+          <div>
+            <dt>EAN / GTIN</dt>
+            <dd class="pb-num">{{ product.ean_gtin || 'Keine' }}</dd>
+          </div>
+          <div>
+            <dt>Gewicht / Volumen</dt>
+            <dd class="pb-num">{{ product | amount }}</dd>
+          </div>
+          <div>
+            <dt>Alkoholgehalt</dt>
+            <dd class="pb-num">{{ (product.alcohol_volume ?? 0) | number: '1.0-1' }} %</dd>
+          </div>
+        </dl>
 
-      <div class="info-section">
-        <p><strong>Preis Lieferung:</strong> {{ product.price_delivery != null ? (product.price_delivery | currency) : 'Keine' }}</p>
-        <p><strong>Preis Abholung:</strong> {{ product.price_pickup != null ? (product.price_pickup | currency) : 'Keine' }}</p>
-        <p><strong>Gewicht/Volumen:</strong>
-        {{ product | amount }}
-      </p>
-      <p><strong>Pfand:</strong> {{ product.deposit_amount ? (product.deposit_amount | currency) : 'Keine' }}</p>
+        <hr class="divider">
+
+        <h2 class="pb-eyebrow section__title">Preise</h2>
+        <dl class="facts">
+          <div>
+            <dt>Preis Lieferung</dt>
+            <dd class="pb-num">{{ product.price_delivery != null ? (product.price_delivery | currency) : 'Keine' }}</dd>
+          </div>
+          <div>
+            <dt>Preis Abholung</dt>
+            <dd class="pb-num">{{ product.price_pickup != null ? (product.price_pickup | currency) : 'Keine' }}</dd>
+          </div>
+          <div>
+            <dt>Pfand</dt>
+            <dd class="pb-num">{{ product.deposit_amount ? (product.deposit_amount | currency) : 'Keine' }}</dd>
+          </div>
+        </dl>
+
+        <hr class="divider">
+
+        <h2 class="pb-eyebrow section__title">Hersteller</h2>
+        <dl class="facts">
+          <div>
+            <dt>Name</dt>
+            <dd>{{ product.manufacturer.name || 'Keine' }}</dd>
+          </div>
+          <div>
+            <dt>Adresse</dt>
+            <dd>{{ product.manufacturer.address || 'Keine' }}</dd>
+          </div>
+          <div>
+            <dt>Land</dt>
+            <dd>{{ product.manufacturer.country || 'Keine' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <div class="lower">
+        <section class="pb-card section ingredients" aria-labelledby="ingredients-title">
+          <h2 id="ingredients-title" class="pb-eyebrow section__title">Zutaten</h2>
+          @if (ingredientList().length) {
+            <ul class="ingredient-list">
+              @for (name of ingredientList(); track name) {
+                <li class="pb-chip ingredient">{{ name }}</li>
+              }
+            </ul>
+          } @else {
+            <p class="empty">Keine Zutaten verfügbar.</p>
+          }
+        </section>
+
+        <section class="pb-card section nutrition" aria-labelledby="nutrition-title">
+          <h2 id="nutrition-title" class="pb-eyebrow section__title">Nährwerte</h2>
+          <table class="nutrition-table">
+            <tbody>
+              @for (row of nutritionRows(); track row.label) {
+                <tr [class.is-sub]="row.sub">
+                  <th scope="row">{{ row.label }}</th>
+                  <td class="pb-num">
+                    {{ row.value != null ? (row.value | number: '1.0-1') + ' ' + row.unit : 'N/A' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+      </div>
     </div>
   </div>
-
-  <!-- 🔹 Zutaten -->
-  <mat-expansion-panel class="ingredients-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title> 🍽️ Zutaten </mat-panel-title>
-    </mat-expansion-panel-header>
-    @if (ingredientNames === 'Keine') {
-      <p>Keine Zutaten verfügbar.</p>
-    }
-    @if (ingredientNames !== 'Keine') {
-      <ul>
-        @for (ingredient of product.ingredients; track ingredient) {
-          <li>{{ ingredient.name }}</li>
-        }
-      </ul>
-    }
-  </mat-expansion-panel>
-
-  <!-- 🔹 Nährwerte -->
-  <mat-expansion-panel class="nutrition-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title> 🥗 Nährwerte </mat-panel-title>
-    </mat-expansion-panel-header>
-    <div class="nutrition-grid">
-      <div><strong>Energie:</strong> {{ product.nutritionInfo?.energy_kcal ?? 'N/A' }} kcal</div>
-      <div><strong>Eiweiß:</strong> {{ product.nutritionInfo?.protein_g ?? 'N/A' }} g</div>
-      <div><strong>Fett:</strong> {{ product.nutritionInfo?.fat_g ?? 'N/A' }} g</div>
-      <div><strong>Gesättigte Fettsäuren:</strong> {{ product.nutritionInfo?.saturated_fat_g ?? 'N/A' }} g</div>
-      <div><strong>Kohlenhydrate:</strong> {{ product.nutritionInfo?.carbohydrates_g ?? 'N/A' }} g</div>
-      <div><strong>Zucker:</strong> {{ product.nutritionInfo?.sugar_g ?? 'N/A' }} g</div>
-      <div><strong>Ballaststoffe:</strong> {{ product.nutritionInfo?.fiber_g ?? 'N/A' }} g</div>
-      <div><strong>Natrium:</strong> {{ product.nutritionInfo?.sodium_mg ?? 'N/A' }} mg</div>
-    </div>
-  </mat-expansion-panel>
-
-  <!-- 🏭 Hersteller Panel -->
-  <mat-expansion-panel class="hersteller-panel">
-    <mat-expansion-panel-header>
-      <mat-panel-title>🏭 Hersteller</mat-panel-title>
-    </mat-expansion-panel-header>
-    <div class="hersteller-grid">
-      <p><strong>Name:</strong> {{ product.manufacturer.name || 'Keine' }}</p>
-      <p><strong>Adresse:</strong> {{ product.manufacturer.address || 'Keine' }}</p>
-      <p><strong>Land:</strong> {{ product.manufacturer.country || 'Keine' }}</p>
-    </div>
-  </mat-expansion-panel>
-
-  <!-- 🔹 Buttons -->
-  <div class="button-group">
-    <button mat-raised-button color="primary" (click)="editProduct(product); $event.stopPropagation()">
-      📝 Bearbeiten
-    </button>
-    <button mat-raised-button color="warn" (click)="deleteProduct(product); $event.stopPropagation()">
-      ❌ Löschen
-    </button>
-  </div>
-</mat-card>
 </div>

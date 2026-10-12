@@ -1,18 +1,21 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
-import { AmountPipe } from '../../pipes/amount.pipe';
-import { PLACEHOLDER_IMAGE, showPlaceholder } from '../../pipes/product-image';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { ProductService } from '../../services/product.service';
-import { Product, Category} from '../../interfaces/models';
+import { Product, Category } from '../../interfaces/models';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { IconComponent } from '../icon/icon.component';
+import { AmountPipe } from '../../pipes/amount.pipe';
 
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatCardModule} from '@angular/material/card';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
-import {MatDialog} from '@angular/material/dialog';
+/** Eine Zeile der Nährwerttabelle; sub = eingerückter Unterwert. */
+interface NutritionRow {
+  label: string;
+  value: number | null | undefined;
+  unit: string;
+  sub?: boolean;
+}
 
 @Component({
   selector: 'app-product-details',
@@ -20,11 +23,11 @@ import {MatDialog} from '@angular/material/dialog';
   styleUrls: ['./product-details.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.Eager,
-  imports: [MatButtonModule, MatExpansionModule, MatCardModule, ReactiveFormsModule, CurrencyPipe, DecimalPipe, AmountPipe] // Agregamos CommonModule y FormsModule
+  imports: [RouterLink, IconComponent, CurrencyPipe, DecimalPipe, AmountPipe]
 })
 export class ProductDetailsComponent implements OnInit {
-  readonly placeholderImage = PLACEHOLDER_IMAGE;
-  readonly showPlaceholder = showPlaceholder;
+  // Das Bild lädt nicht (Link tot oder blockiert): dann erscheint die Initiale.
+  imageFailed = false;
 
   product: Product = {
     product_id: 0,
@@ -152,6 +155,30 @@ export class ProductDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  /**
+   * Zutatennamen ohne Lücken. Die API liefert für ein Produkt ohne Zutaten
+   * eine Zeile mit name: null (LEFT JOIN), die hier nicht als Chip erscheinen soll.
+   */
+  ingredientList(): string[] {
+    return (this.product.ingredients ?? [])
+      .map((ingredient) => ingredient.name)
+      .filter((name): name is string => !!name);
+  }
+
+  nutritionRows(): NutritionRow[] {
+    const n = this.product.nutritionInfo;
+    return [
+      { label: 'Energie', value: n?.energy_kcal, unit: 'kcal' },
+      { label: 'Eiweiß', value: n?.protein_g, unit: 'g' },
+      { label: 'Fett', value: n?.fat_g, unit: 'g' },
+      { label: 'Gesättigte Fettsäuren', value: n?.saturated_fat_g, unit: 'g', sub: true },
+      { label: 'Kohlenhydrate', value: n?.carbohydrates_g, unit: 'g' },
+      { label: 'Zucker', value: n?.sugar_g, unit: 'g', sub: true },
+      { label: 'Ballaststoffe', value: n?.fiber_g, unit: 'g' },
+      { label: 'Natrium', value: n?.sodium_mg, unit: 'mg' },
+    ];
   }
 
   cancelEdit(): void {

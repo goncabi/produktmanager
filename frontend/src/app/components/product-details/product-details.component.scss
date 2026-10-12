@@ -1,60 +1,166 @@
-.product-details-container {
+.details-page { padding-top: 24px; padding-bottom: 40px; }
+
+.crumb-sep { display: inline-flex; color: var(--pb-muted); }
+
+.title-row {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
-  margin-top: 20px;
-  margin-left: 20px;
-}
-.image-section {
-  text-align: center;
-  margin-bottom: 15px;
-
-}
-.product-image {
-  // Fester quadratischer Rahmen: Fotos haben verschiedene Seitenverhältnisse
-  // und sollen ganz sichtbar bleiben, ohne verzerrt zu werden.
-  width: 220px;
-  height: 220px;
-  object-fit: contain;
-  padding: 12px;
-  box-sizing: border-box;
-  background: #fff;
-  border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: var(--mat-sys-level2);
-}
-
-.details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  grid-template-rows: repeat(3, auto);
-  gap: 15px;
-  margin-left: 20px;
-  font-size: 1rem;
-  font-weight: 400;
-  align-items: center;
-}
-
-.product-card {
-  width: 80%;
-  padding: 20px;
-  background-color: var(--mat-sys-surface-container);
-}
-
-.button-group {
-  display: flex;
   justify-content: space-between;
-  margin-top: 15px;
+  gap: 12px 24px;
+  margin-bottom: 24px;
 }
 
-.ingredients-panel, .nutrition-panel, .hersteller-panel {
-  margin-top: 15px;
+.title-row__name,
+.title-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
 }
 
-.nutrition-grid {
-  display: grid;
-  grid-template-columns: (auto-fit, minmax(200px, 1fr));
+.title-row__actions { gap: 8px; }
+
+// Bildspalte 320 px, Inhalt nimmt den Rest; auf schmalen Bildschirmen gestapelt.
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.image-card {
+  flex: 0 1 320px;
+  min-width: 0;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.product-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  padding: 12px;
+  border-radius: var(--pb-radius-control);
+}
+
+// .product-image setzt display: block; der Platzhalter braucht Flex, um
+// Initiale und Hinweis mittig untereinander zu stellen.
+.product-image--initial {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  padding: 10px;
-  border-radius: 8px;
+}
+
+.product-image__letter {
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.product-image__caption {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--pb-muted);
+}
+
+.content {
+  flex: 999 1 520px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section {
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.section__title { margin-bottom: 16px; }
+
+.facts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px 24px;
+
+  dt {
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--pb-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--pb-text);
+    overflow-wrap: anywhere;
+  }
+}
+
+.divider {
+  height: 1px;
+  margin: 24px 0;
+  border: 0;
+  background: var(--pb-border-soft);
+}
+
+.lower {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.ingredients { flex: 1 1 220px; min-width: 0; }
+.nutrition { flex: 2 1 340px; min-width: 0; padding-bottom: 12px; }
+.nutrition .section__title { margin-bottom: 8px; }
+
+.ingredient-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ingredient { padding: 6px 14px; font-size: 14px; }
+
+.empty {
+  margin: 0;
+  color: var(--pb-muted);
+}
+
+.nutrition-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+
+  tr { border-bottom: 1px solid var(--pb-border-soft); }
+  tr:last-child { border-bottom: 0; }
+
+  th {
+    padding: 12px 0;
+    text-align: left;
+    font-weight: 400;
+    color: var(--pb-text);
+  }
+
+  td {
+    padding: 12px 0;
+    text-align: right;
+    font-weight: 500;
+    color: var(--pb-text);
+    white-space: nowrap;
+  }
+
+  // Unterwerte (Gesättigte Fettsäuren, Zucker): eingerückt und gedämpft.
+  .is-sub th {
+    padding-left: 20px;
+    color: var(--pb-muted);
+  }
 }
