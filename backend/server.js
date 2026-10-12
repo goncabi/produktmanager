@@ -22,6 +22,11 @@ populateDatabase();
 // Routen
 app.use("/api/products", productRoutes);
 
+// Startseite der API: zeigt, dass der Dienst läuft und wo die Daten liegen.
+app.get("/", (req, res) => {
+    res.json({ service: "produktmanager-backend", status: "ok", products: "/api/products" });
+});
+
 
 // Server starten
 app.listen(PORT, () => {
