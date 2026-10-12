@@ -20,7 +20,8 @@ normalized PostgreSQL schema.
 
 ## Data model
 
-The database is normalized instead of storing each product as one wide row:
+The database is normalized instead of storing each product as one wide row
+(full schema in [`backend/schema.sql`](backend/schema.sql)):
 
 | Table | Holds |
 | --- | --- |
@@ -71,9 +72,10 @@ npm run dev            # http://localhost:5000, restarts on file changes
 To empty the database during development, run `npm run db:reset -- --yes`. The
 sample data is loaded again on the next server start.
 
-The database connection uses SSL, as required by the hosted database it was
-deployed with. For a local PostgreSQL without SSL, remove the `ssl` option in
-`backend/config/db.js`.
+On startup the backend creates the tables from `backend/schema.sql` if they
+are missing and loads the sample data, so an empty database is enough. The
+connection uses SSL, as hosted databases require; set `DB_SSL=false` for a
+local PostgreSQL without SSL (the default in `.env.example`).
 
 ### Frontend
 

@@ -1,5 +1,8 @@
 require("dotenv").config();
-const { Pool } = require("pg");
+const { Pool, types } = require("pg");
+
+// NUMERIC kommt von pg als String ("1.50"). Das Frontend erwartet Zahlen.
+types.setTypeParser(types.builtins.NUMERIC, (value) => parseFloat(value));
 
 // PostgreSQL-Verbindung
 const pool = new Pool({
@@ -8,7 +11,9 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-    ssl: { rejectUnauthorized: false }
+    // Gehostete Datenbanken (Render, Neon) verlangen SSL; ein lokales
+    // PostgreSQL meist nicht. Lokal: DB_SSL=false in der .env.
+    ssl: process.env.DB_SSL === "false" ? false : { rejectUnauthorized: false }
 });
 pool.connect()
     .then((client) => {

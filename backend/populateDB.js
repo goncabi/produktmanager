@@ -1,8 +1,25 @@
 // 📌 Este script pobla la base de datos con datos iniciales automáticamente al iniciar el backend
+const fs = require('fs');
+const path = require('path');
 const pool = require('./config/db');
+
+const SCHEMA = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+
+// Die Beispieldaten setzen die IDs fest (1, 2, 3 …). Danach muss der Zähler der
+// Identity-Spalte nachziehen, sonst kollidiert das erste über die App angelegte
+// Produkt mit der ID 1.
+async function syncIdSequence(table, column) {
+    await pool.query(
+        `SELECT setval(pg_get_serial_sequence('${table}', '${column}'),
+                       COALESCE((SELECT MAX(${column}) FROM ${table}), 1));`
+    );
+}
 
 async function populateDatabase() {
     try {
+        // Tabellen anlegen, falls sie fehlen (schema.sql ist idempotent).
+        await pool.query(SCHEMA);
+
         console.log('📌 Datenbank wird gefüllt...');
 
 
@@ -31,12 +48,17 @@ async function populateDatabase() {
         // ===========================
         // 3. INGREDIENTS
         // ===========================
+        // NOT EXISTS statt ON CONFLICT: ältere Datenbanken haben auf
+        // ingredients.name keinen UNIQUE-Constraint.
         await pool.query(`
             INSERT INTO ingredients (name)
-            VALUES
+            SELECT v.name
+            FROM (VALUES
                 ('Wasser'), ('Zucker'), ('Salz'), ('Milchpulver'),
                 ('Kakaopulver'), ('Vanille'), ('Milch'),
                 ('Weizenmehl'), ('Honig'), ('Kohlenhydrate')
+            ) AS v (name)
+            WHERE NOT EXISTS (SELECT 1 FROM ingredients i WHERE i.name = v.name);
         `);
 
         // ===========================
@@ -67,6 +89,10 @@ async function populateDatabase() {
             `, product);
         }
 
+        await syncIdSequence('categories', 'category_id');
+        await syncIdSequence('manufacturers', 'manufacturer_id');
+        await syncIdSequence('products', 'product_id');
+
         // ===========================
         // 5. PRODUCT_INGREDIENTS
         // ===========================
@@ -87,7 +113,7 @@ async function populateDatabase() {
             const ingredientResult = await pool.query(`SELECT ingredient_id FROM ingredients WHERE name = $1;`, [ingredientName]);
             if (ingredientResult.rows.length > 0) {
                 const ingredientId = ingredientResult.rows[0].ingredient_id;
-                await pool.query(`INSERT INTO product_ingredients (product_id, ingredient_id) VALUES ($1, $2);`, [productId, ingredientId]);
+                await pool.query(`INSERT INTO product_ingredients (product_id, ingredient_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;`, [productId, ingredientId]);
             }
         }
         // ===========================
@@ -109,7 +135,8 @@ async function populateDatabase() {
         for (const info of nutritionInfo) {
             await pool.query(`
                 INSERT INTO nutrition_info (product_id, energy_kcal, protein_g, fat_g, saturated_fat_g, carbohydrates_g, sugar_g, fiber_g, sodium_mg)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                ON CONFLICT (product_id) DO NOTHING;
             `, info);
         }
 
